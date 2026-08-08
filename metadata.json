@@ -1,0 +1,10 @@
+{
+  "name": "VaultShield — 2FA & Security Center",
+  "description": "VaultShield Two-Factor Authentication (2FA) setup with Google Authenticator, Authy TOTP, SMS verification codes, and security management",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
