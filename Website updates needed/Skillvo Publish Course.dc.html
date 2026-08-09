@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #235347; text-decoration: none; }
+  a:hover { color: #051F20; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes checkPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+  <header style="position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: rgba(239,248,242,.82); border-bottom: 1px solid rgba(142,182,155,.5);">
+    <div style="max-width: 720px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <a href="Skillvo Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+        <span style="font-size: 18px;">←</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px;">Back to dashboard</span>
+      </a>
+      <span style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px;">
+        <span style="width: 24px; height: 24px; border-radius: 8px; background: #FFFFFF; box-shadow: 0 2px 5px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 17px; height: 17px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.5px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+        Skillvo
+      </span>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 40px 24px 80px;">
+    <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align: center; padding: 60px 20px; animation: rise .5s cubic-bezier(.22,1,.36,1) both;">
+        <span style="width: 72px; height: 72px; margin: 0 auto; border-radius: 50%; background: #163832; display: flex; align-items: center; justify-content: center; animation: checkPop .5s cubic-bezier(.22,1,.36,1) both;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"></path></svg>
+        </span>
+        <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 22px; margin: 18px 0 0;">Course submitted for review!</h1>
+        <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0;">Next step: take the Teacher Skill Assessment to get it published.</p>
+        <a href="Skillvo Dashboard.dc.html" style="display: inline-block; margin-top: 20px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #0B2B26; border-radius: 10px; padding: 12px 26px;">Back to dashboard</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+      <div style="background: #FFFFFF; border-radius: 20px; padding: 36px; animation: rise .5s cubic-bezier(.22,1,.36,1) both;">
+        <span style="display: inline-flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; color: #235347; background: #DAF1DE; padding: 7px 14px; border-radius: 999px;">🎓 Step 1: Course Overview</span>
+        <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 24px; margin: 16px 0 0;">Publish New Course</h1>
+        <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0;">Define course title, topic category, and credit fee. Next step is taking the Teacher Skill Test!</p>
+
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 18px;">
+          <label style="display: block;">
+            <span style="display: block; font-size: 13px; font-weight: 600; color: #051F20; margin-bottom: 6px;">Course Title</span>
+            <input type="text" value="{{ pubTitle }}" onChange="{{ onPubTitle }}" placeholder="e.g. Distributed Node.js & Microservices" style="width: 100%; font-size: 14px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 10px; padding: 13px 15px; outline: none;" style-focus="border-color: #235347;" />
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <label style="display: block;">
+              <span style="display: block; font-size: 13px; font-weight: 600; color: #051F20; margin-bottom: 6px;">Topic Domain Category</span>
+              <select value="{{ pubCategory }}" onChange="{{ onPubCategory }}" style="width: 100%; font-size: 14px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 10px; padding: 13px 15px; outline: none;" style-focus="border-color: #235347;">
+                <sc-for list="{{ categoryOptions }}" as="opt" hint-placeholder-count="6">
+                  <option value="{{ opt }}">{{ opt }}</option>
+                </sc-for>
+              </select>
+            </label>
+            <label style="display: block;">
+              <span style="display: block; font-size: 13px; font-weight: 600; color: #051F20; margin-bottom: 6px;">Credit Fee per Student</span>
+              <input type="number" value="{{ pubFee }}" onChange="{{ onPubFee }}" style="width: 100%; font-size: 14px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 10px; padding: 13px 15px; outline: none;" style-focus="border-color: #235347;" />
+            </label>
+          </div>
+          <label style="display: block;">
+            <span style="display: block; font-size: 13px; font-weight: 600; color: #051F20; margin-bottom: 6px;">Description / Curriculum Overview</span>
+            <textarea value="{{ pubDesc }}" onChange="{{ onPubDesc }}" placeholder="Provide details on what students will master…" rows="5" style="width: 100%; font-size: 14px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 10px; padding: 13px 15px; outline: none; resize: vertical;"></textarea>
+          </label>
+          <button type="button" onClick="{{ submitPublish }}" style="margin-top: 8px; width: 100%; font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px; color: #FFFFFF; background: #0B2B26; border: 0; border-radius: 10px; padding: 15px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .3s ease, transform .25s ease;" style-hover="background: #235347; transform: scale(1.02);">Proceed to Teacher Skill Assessment →</button>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(142,182,155,.6); padding: 28px 24px; text-align: center; font-size: 14px; color: #4A544C;">Skillvo — learning that adds up.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+
+
+
+  state = { done: false, pubTitle: '', pubCategory: 'Engineering', pubFee: 15, pubDesc: ''  };
+
+  renderVals() {
+    return {
+      done: this.state.done,
+      notDone: !this.state.done,
+      pubTitle: this.state.pubTitle,
+      pubCategory: this.state.pubCategory,
+      pubFee: this.state.pubFee,
+      pubDesc: this.state.pubDesc,
+      categoryOptions: ['Engineering', 'AI & Data', 'Design', 'Security', 'Business', 'Beginner'],
+      onPubTitle: (e) => this.setState({ pubTitle: e.target.value }),
+      onPubCategory: (e) => this.setState({ pubCategory: e.target.value }),
+      onPubFee: (e) => this.setState({ pubFee: e.target.value }),
+      onPubDesc: (e) => this.setState({ pubDesc: e.target.value }),
+      submitPublish: () => this.setState({ done: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

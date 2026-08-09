@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #235347; text-decoration: none; }
+  a:hover { color: #051F20; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes rowIn { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+  @keyframes barFill { from { width: 0; } }
+  @keyframes crownFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
+  @keyframes podiumUp { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: none; } }
+  @keyframes confettiFall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(220px) rotate(360deg); opacity: 0; } }
+  @keyframes flamePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+  <header style="position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: rgba(239,248,242,.82); border-bottom: 1px solid rgba(142,182,155,.5);">
+    <div style="max-width: 900px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <a href="Skillvo Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+        <span style="font-size: 18px;">←</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px;">Back to dashboard</span>
+      </a>
+      <span style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px;">
+        <span style="width: 24px; height: 24px; border-radius: 8px; background: #FFFFFF; box-shadow: 0 2px 5px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 17px; height: 17px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.5px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+        Skillvo
+      </span>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; animation: rise .6s cubic-bezier(.22,1,.36,1) both;">
+    <div style="text-align: center;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #235347; background: #FFFFFF; border: 1px solid #8EB69B; padding: 8px 16px; border-radius: 999px;">🔥 {{ weekLabel }}</span>
+      <h1 style="font-family: Poppins, sans-serif; font-weight: 800; font-size: 32px; margin: 16px 0 0; letter-spacing: -.6px;">Who's leading the charge?</h1>
+      <p style="font-size: 15px; color: #4A544C; margin: 8px 0 0;">Every lesson counts. Climb the board and earn bragging rights.</p>
+    </div>
+
+    <div style="display: inline-flex; gap: 6px; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 14px; padding: 6px; margin: 24px auto 0; display: flex; justify-content: center; width: fit-content;">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="2">
+        <button type="button" onClick="{{ tab.onClick }}" style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; padding: 10px 24px; border-radius: 10px; border: 0; cursor: pointer; white-space: nowrap; background: {{ tab.bg }}; color: {{ tab.color }}; transition: background .3s ease, color .3s ease;">{{ tab.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 16px; margin-top: 40px; padding: 0 10px;">
+      <span aria-hidden="true" style="position: absolute; top: -10px; left: 20%; width: 8px; height: 8px; border-radius: 2px; background: #F5D6B4; animation: confettiFall 3.2s linear infinite .2s;"></span>
+      <span aria-hidden="true" style="position: absolute; top: -10px; left: 50%; width: 8px; height: 8px; border-radius: 2px; background: #E7A98F; animation: confettiFall 2.8s linear infinite .6s;"></span>
+      <span aria-hidden="true" style="position: absolute; top: -10px; left: 78%; width: 8px; height: 8px; border-radius: 2px; background: #8EB69B; animation: confettiFall 3.5s linear infinite 1s;"></span>
+
+      <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; order: {{ p.order }}; animation: podiumUp .5s cubic-bezier(.22,1,.36,1) {{ p.delay }} both;">
+          <sc-if value="{{ p.isFirst }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 26px; animation: crownFloat 2.4s ease-in-out infinite;">👑</span>
+          </sc-if>
+          <span style="width: {{ p.avatarSize }}px; height: {{ p.avatarSize }}px; border-radius: 50%; background: {{ p.avatarBg }}; color: #051F20; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: {{ p.fontSize }}px; border: 3px solid {{ p.ring }};">{{ p.initials }}</span>
+          <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; text-align: center;">{{ p.name }}</div>
+          <div style="font-family: Poppins, sans-serif; font-weight: 800; font-size: 13px; color: #235347;">{{ p.score }} pts</div>
+          <div style="width: 92px; height: {{ p.barHeight }}px; border-radius: 12px 12px 0 0; background: {{ p.barBg }}; display: flex; align-items: flex-start; justify-content: center; padding-top: 10px;">
+            <span style="font-family: Poppins, sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF;">{{ p.rank }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top: 36px; background: linear-gradient(135deg, #163832, #235347); border-radius: 18px; padding: 22px 26px; display: flex; align-items: center; gap: 16px; color: #FFFFFF;">
+      <span style="font-size: 28px; animation: flamePulse 1.6s ease-in-out infinite;">🔥</span>
+      <div>
+        <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px;">You're rank #{{ myRank }} — {{ pointsToNext }} pts from the next spot</div>
+        <div style="font-size: 13px; color: #DAF1DE; margin-top: 3px;">Finish one more lesson today to keep your streak alive.</div>
+      </div>
+    </div>
+
+    <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; margin: 32px 0 14px;">Full rankings</h2>
+    <div style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 20px; padding: 12px; box-shadow: 0 16px 40px rgba(11,43,38,.08);">
+      <sc-for list="{{ leaders }}" as="lead" hint-placeholder-count="6">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; opacity: {{ lead.revealed }}; animation: rowIn .5s cubic-bezier(.22,1,.36,1) {{ lead.delay }} both; background: {{ lead.rowBg }}; transition: transform .25s ease;" style-hover="transform: translateX(4px);">
+          <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px; width: 26px; text-align: center; color: {{ lead.rankColor }};">{{ lead.rank }}</span>
+          <span style="width: 40px; height: 40px; border-radius: 50%; background: {{ lead.avatarBg }}; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px; color: #051F20; flex: none; position: relative;">
+            {{ lead.initials }}
+            <sc-if value="{{ lead.crown }}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 16px; animation: crownFloat 1.6s ease-in-out infinite;">👑</span>
+            </sc-if>
+          </span>
+          <div style="flex: 1;">
+            <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 15px;">{{ lead.name }}</div>
+            <div style="font-size: 11px; color: #4A544C; margin-top: 1px;">{{ lead.meta }}</div>
+          </div>
+          <div style="width: 120px; height: 6px; border-radius: 999px; background: #DAF1DE; overflow: hidden;">
+            <span style="display: block; height: 100%; background: #235347; width: {{ lead.barWidth }}%; animation: barFill 1.1s cubic-bezier(.22,1,.36,1) {{ lead.delay }} both;"></span>
+          </div>
+          <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; width: 70px; text-align: right; color: #051F20;">{{ lead.score }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ showMyRankCard }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top: 14px; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; border: 2px dashed #8EB69B; background: rgba(142,182,155,.1);">
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px; width: 26px; text-align: center; color: #235347;">{{ myRankLabel }}</span>
+        <span style="width: 40px; height: 40px; border-radius: 50%; background: #0B2B26; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 15px; color: #FFFFFF; flex: none;">YO</span>
+        <div style="flex: 1;">
+          <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 15px;">You</div>
+          <div style="font-size: 11px; color: #4A544C; margin-top: 1px;">{{ myMeta }}</div>
+        </div>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; width: 70px; text-align: right; color: #051F20;">{{ myScore }}</span>
+      </div>
+    </sc-if>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(142,182,155,.6); padding: 28px 24px; text-align: center; font-size: 14px; color: #4A544C;">Skillvo — learning that adds up.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STUDENTS = [
+  { rank: 1, name: 'Ava', initials: 'AV', score: 480, crown: true, meta: '480 credits earned' },
+  { rank: 2, name: 'Marcus', initials: 'MJ', score: 445, meta: '445 credits earned' },
+  { rank: 3, name: 'Priya', initials: 'PS', score: 410, meta: '410 credits earned' },
+  { rank: 4, name: 'Devon', initials: 'DL', score: 375, meta: '375 credits earned' },
+  { rank: 5, name: 'Liam', initials: 'LK', score: 340, meta: '340 credits earned' },
+  { rank: 6, name: 'Rosa', initials: 'RD', score: 298, meta: '298 credits earned' }
+];
+const YOU_STUDENT = { rank: 18, name: 'You', initials: 'YO', score: 145, meta: '145 credits earned' };
+const YOU_TEACHER = { rank: 24, name: 'You', initials: 'YO', score: 210, meta: '6 students taught' };
+
+const TEACHERS = [
+  { rank: 1, name: 'Vipul Bangar', initials: 'VB', score: 1240, crown: true, meta: '32 students taught' },
+  { rank: 2, name: 'Amara Chen', initials: 'AC', score: 1105, meta: '27 students taught' },
+  { rank: 3, name: 'Rosa Diaz', initials: 'RD', score: 980, meta: '21 students taught' },
+  { rank: 4, name: 'Devon Lee', initials: 'DL', score: 860, meta: '18 students taught' },
+  { rank: 5, name: 'Amara Singh', initials: 'AS', score: 745, meta: '15 students taught' }
+];
+
+class Component extends DCLogic {
+
+
+  state = { view: 'students', revealed: false  };
+
+  componentDidMount() {
+    setTimeout(() => this.setState({ revealed: true }), 200);
+  }
+
+  renderVals() {
+    const list = this.state.view === 'students' ? STUDENTS : TEACHERS;
+    const maxScore = Math.max(...list.map((l) => l.score));
+    const top3 = list.slice(0, 3);
+    const podiumOrder = { 1: 2, 2: 1, 3: 3 };
+    const podiumHeight = { 1: 96, 2: 68, 3: 50 };
+    const podiumBg = { 1: '#235347', 2: '#8EB69B', 3: '#F5D6B4' };
+    const ringColor = { 1: '#F5D6B4', 2: '#8EB69B', 3: '#E7A98F' };
+    const you = this.state.view === 'students' ? YOU_STUDENT : YOU_TEACHER;
+    const inTop = list.some((l) => l.name === 'You');
+
+    return {
+      weekLabel: this.state.view === 'students' ? "This week's top learners" : "This week's top instructors",
+      myRank: you.rank,
+      pointsToNext: Math.max(0, list[list.length - 1].score - you.score),
+      showMyRankCard: !inTop,
+      myRankLabel: `#${you.rank}`,
+      myScore: you.score,
+      myMeta: you.meta,
+      tabs: [
+        { key: 'students', label: 'Students' },
+        { key: 'teachers', label: 'Teachers' }
+      ].map((t) => ({ ...t, onClick: () => this.setState({ view: t.key, revealed: false }, () => setTimeout(() => this.setState({ revealed: true }), 50)), bg: this.state.view === t.key ? '#0B2B26' : 'transparent', color: this.state.view === t.key ? '#FFFFFF' : '#051F20' })),
+      podium: top3.map((p, i) => ({
+        ...p,
+        isFirst: p.rank === 1,
+        order: podiumOrder[p.rank],
+        barHeight: podiumHeight[p.rank],
+        barBg: podiumBg[p.rank],
+        ring: ringColor[p.rank],
+        avatarBg: '#FFFFFF',
+        avatarSize: p.rank === 1 ? 64 : 52,
+        fontSize: p.rank === 1 ? 18 : 15,
+        delay: (i * 0.12) + 's'
+      })),
+      leaders: list.map((l, i) => ({
+        ...l,
+        rankColor: l.rank === 1 ? '#C99A6B' : '#051F20',
+        avatarBg: l.name === 'You' ? '#0B2B26' : '#DAF1DE',
+        rowBg: l.name === 'You' ? 'rgba(231,169,143,.18)' : 'transparent',
+        barWidth: this.state.revealed ? (l.score / maxScore) * 100 : 0,
+        revealed: this.state.revealed ? 1 : 0,
+        delay: (i * 0.1) + 's'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

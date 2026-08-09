@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<script src="./image-slot.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #8EB69B; text-decoration: none; }
+  a:hover { color: #DAF1DE; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+  <header style="position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); background: rgba(239,248,242,.88); border-bottom: 1px solid rgba(5,31,32,.08);">
+    <div style="max-width: 1160px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <a href="Skillvo Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+        <span style="font-size: 18px;">←</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px;">Back to dashboard</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <a href="Skillvo Home.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+          <span style="width: 30px; height: 30px; border-radius: 10px; background: #EFF8F2; box-shadow: 0 2px 6px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 22px; height: 22px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+          <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.4px;">Skillvo</span>
+        </a>
+        <span style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #051F20; background: #8EB69B; border-radius: 999px; padding: 8px 16px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #163832; flex: none;"></span>
+          {{ credits }} Credits
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 40px 24px 80px;">
+    <section style="animation: rise .6s cubic-bezier(.22,1,.36,1) both;">
+      <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; flex: none;">
+          <span style="position: relative; width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#8EB69B 0deg {{ xpDeg }}deg, #DAF1DE {{ xpDeg }}deg 360deg); display: flex; align-items: center; justify-content: center; flex: none;">
+            <span style="width: 84px; height: 84px; border-radius: 50%; overflow: hidden; background: #EFF8F2; border: 3px solid #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 22px; color: #163832; background-image: {{ avatarBg }}; background-size: cover; background-position: center;">
+              <sc-if value="{{ noAvatar }}" hint-placeholder-val="{{ true }}">{{ initials }}</sc-if>
+            </span>
+          </span>
+          <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 6px;">
+              <button type="button" onClick="{{ browseFiles }}" style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 11px; color: #051F20; background: #8EB69B; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer;">Browse files</button>
+              <button type="button" onClick="{{ takePhoto }}" style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 11px; color: #FFFFFF; background: #163832; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer;">Take photo</button>
+            </div>
+            <input ref="{{ fileInputRef }}" type="file" accept="image/*" onChange="{{ onAvatarFile }}" style="display: none;" />
+            <input ref="{{ cameraInputRef }}" type="file" accept="image/*" capture="user" onChange="{{ onAvatarFile }}" style="display: none;" />
+          </sc-if>
+        </div>
+        <div style="flex: 1; min-width: 220px;">
+          <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+            <input type="text" value="{{ name }}" onChange="{{ onName }}" placeholder="Your name" style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 22px; color: #000000; background: #FFFFFF; border: 1px solid rgba(5,31,32,.15); border-radius: 8px; padding: 8px 12px; outline: none; width: 100%; max-width: 320px;" />
+            <input type="text" value="{{ specialization }}" onChange="{{ onSpecialization }}" placeholder="Professional specialization" style="display: block; margin-top: 8px; font-family: Lato, sans-serif; font-size: 14px; font-weight: 700; color: #235347; background: #FFFFFF; border: 1px solid rgba(5,31,32,.15); border-radius: 8px; padding: 8px 12px; outline: none; width: 100%; max-width: 320px;" />
+          </sc-if>
+          <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+            <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 26px; margin: 0; color: #051F20;">{{ name }}</h1>
+            <p style="font-size: 14px; color: #235347; margin: 4px 0 0; font-weight: 700;">{{ specialization }}</p>
+          </sc-if>
+          <p style="font-size: 14px; color: #4A544C; margin: 6px 0 0;">Level {{ level }} · {{ credits }} / {{ creditGoal }} XP to next level</p>
+        </div>
+        <button type="button" onClick="{{ toggleEdit }}" style="margin-left: auto; font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #051F20; background: #8EB69B; border: 0; border-radius: 10px; padding: 12px 22px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: scale(1.04);">{{ editLabel }}</button>
+      </div>
+
+      <div style="margin-top: 24px; background: #FFFFFF; border: 1px solid rgba(5,31,32,.08); border-radius: 14px; padding: 20px; box-shadow: 0 4px 16px rgba(5,31,32,.05);">
+        <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B;">About</div>
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <textarea value="{{ bio }}" onChange="{{ onBio }}" placeholder="Write a short bio about yourself…" rows="3" style="width: 100%; margin-top: 10px; font-family: Lato, sans-serif; font-size: 14px; color: #051F20; background: #F5FAF7; border: 1px solid rgba(5,31,32,.15); border-radius: 8px; padding: 10px 12px; outline: none; resize: vertical;"></textarea>
+        </sc-if>
+        <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+          <p style="font-size: 14px; line-height: 1.6; color: #4A544C; margin: 10px 0 0;">{{ bio }}</p>
+        </sc-if>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-top: 32px;">
+        <div>
+          <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B;">Badges earned</div>
+          <div style="display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; margin-top: 12px;">
+            <sc-for list="{{ badgeSlots }}" as="b" hint-placeholder-count="6">
+              <span style="aspect-ratio: 1; border-radius: 14px; background: {{ b.bg }}; display: flex; align-items: center; justify-content: center; font-size: {{ b.fontSize }}; color: {{ b.color }}; transition: transform .3s cubic-bezier(.22,1,.36,1);" style-hover="transform: scale(1.08) rotate(6deg);">{{ b.content }}</span>
+            </sc-for>
+          </div>
+
+          <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B; margin-top: 32px;">Enrolled courses</div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+            <sc-for list="{{ courses }}" as="c" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid rgba(5,31,32,.08); border-radius: 12px; padding: 14px 16px;">
+                <span style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; color: #051F20;">{{ c.title }}</span>
+                <span style="font-size: 12px; color: #4A544C;">{{ c.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="background: #FFFFFF; border: 1px solid rgba(5,31,32,.08); border-radius: 14px; padding: 20px; box-shadow: 0 4px 16px rgba(5,31,32,.05);">
+            <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #235347;">This week</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px;"><span style="font-size: 13px; color: #4A544C;">Leaderboard rank</span><span style="font-family: Poppins, sans-serif; font-weight: 700;">#{{ rank }}</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;"><span style="font-size: 13px; color: #4A544C;">Credits earned</span><span style="font-family: Poppins, sans-serif; font-weight: 700;">+{{ weeklyCredits }}</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;"><span style="font-size: 13px; color: #4A544C;">Lessons done</span><span style="font-family: Poppins, sans-serif; font-weight: 700;">{{ lessonsDone }}</span></div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid rgba(5,31,32,.08); border-radius: 14px; padding: 20px; margin-top: 16px; box-shadow: 0 4px 16px rgba(5,31,32,.05);">
+            <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #235347;">Account</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px;"><span style="font-size: 13px; color: #4A544C;">Email</span><span style="font-size: 13px; color: #051F20;">{{ email }}</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;"><span style="font-size: 13px; color: #4A544C;">Joined</span><span style="font-size: 13px; color: #051F20;">{{ joined }}</span></div>
+            <a href="Skillvo Account Settings.dc.html" style="display: block; margin-top: 16px; text-align: center; width: 100%; font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #051F20; background: #EFF8F2; border: 1px solid rgba(5,31,32,.1); border-radius: 10px; padding: 12px 0; cursor: pointer; transition: background .25s ease;" style-hover="background: #DAF1DE; color: #051F20;">Account settings</a>
+            <button type="button" onClick="{{ logout }}" style="display: block; margin-top: 10px; text-align: center; width: 100%; font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #C4816B; background: transparent; border: 1px solid rgba(196,129,107,.5); border-radius: 10px; padding: 12px 0; cursor: pointer; transition: background .25s ease;" style-hover="background: rgba(196,129,107,.12);">Log out</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(5,31,32,.08); padding: 28px 24px; text-align: center; font-size: 14px; color: #4A544C;">Skillvo — learning that adds up.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;name&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Amar Bhagwat&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;credits&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999},&quot;creditGoal&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:10,&quot;max&quot;:9999},&quot;level&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:1,&quot;max&quot;:99},&quot;rank&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:1,&quot;max&quot;:9999,&quot;section&quot;:&quot;Weekly stats&quot;},&quot;weeklyCredits&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:22,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999,&quot;section&quot;:&quot;Weekly stats&quot;},&quot;lessonsDone&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999,&quot;section&quot;:&quot;Weekly stats&quot;}}">
+class Component extends DCLogic {
+
+
+
+  state = {
+    editing: false,
+    name: null,
+    specialization: this.props.specialization ?? 'Systems Design & AI Learner',
+    bio: this.props.bio ?? 'Curious builder working through Skillvo\'s AI and systems design tracks. Learning in public, one credit at a time.',
+    avatarSrc: null
+   };
+  fileInputRef = React.createRef();
+  cameraInputRef = React.createRef();
+
+  renderVals() {
+    const credits = this.props.credits ?? 50;
+    const creditGoal = this.props.creditGoal ?? 100;
+    const name = this.state.name ?? this.props.name ?? 'Amar Bhagwat';
+    return {
+      credits, creditGoal,
+      name,
+      editing: this.state.editing,
+      notEditing: !this.state.editing,
+      editLabel: this.state.editing ? 'Save profile' : 'Edit profile',
+      toggleEdit: () => this.setState((s) => ({ editing: !s.editing })),
+      onName: (e) => this.setState({ name: e.target.value }),
+      specialization: this.state.specialization,
+      onSpecialization: (e) => this.setState({ specialization: e.target.value }),
+      bio: this.state.bio,
+      onBio: (e) => this.setState({ bio: e.target.value }),
+      avatarBg: this.state.avatarSrc ? `url(${this.state.avatarSrc})` : 'none',
+      noAvatar: !this.state.avatarSrc,
+      fileInputRef: this.fileInputRef,
+      cameraInputRef: this.cameraInputRef,
+      browseFiles: () => this.fileInputRef.current && this.fileInputRef.current.click(),
+      takePhoto: () => this.cameraInputRef.current && this.cameraInputRef.current.click(),
+      onAvatarFile: (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => this.setState({ avatarSrc: reader.result });
+        reader.readAsDataURL(file);
+      },
+      logout: () => { window.location.href = 'pre login.dc.html'; },
+      initials: name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+      level: this.props.level ?? 3,
+      xpDeg: Math.round((credits / creditGoal) * 360),
+      rank: this.props.rank ?? 12,
+      weeklyCredits: this.props.weeklyCredits ?? 22,
+      lessonsDone: this.props.lessonsDone ?? 7,
+      email: this.props.email ?? 'amar.bhagwat@email.com',
+      joined: this.props.joined ?? 'March 2026',
+      badgeSlots: [
+        { bg: '#235347', content: '🏅', fontSize: '22px' },
+        { bg: '#235347', content: '⚡', fontSize: '22px' },
+        { bg: '#235347', content: '🎯', fontSize: '22px' },
+        { bg: '#235347', content: '📘', fontSize: '22px' },
+        { bg: '#EFF8F2', content: 'Locked', fontSize: '12px', color: 'rgba(5,31,32,.35)' },
+        { bg: '#EFF8F2', content: 'Locked', fontSize: '12px', color: 'rgba(5,31,32,.35)' }
+      ],
+      courses: [
+        { title: 'Applied Machine Learning', status: 'Module 4 of 6' },
+        { title: 'Systems Design', status: 'Module 1 of 8' },
+        { title: 'Intro to Statistics', status: 'Completed' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

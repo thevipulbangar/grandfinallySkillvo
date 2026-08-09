@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #235347; text-decoration: none; }
+  a:hover { color: #051F20; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes rowIn { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+  <header style="position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: rgba(239,248,242,.82); border-bottom: 1px solid rgba(142,182,155,.5);">
+    <div style="max-width: 800px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <a href="Skillvo Dashboard.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+        <span style="font-size: 18px;">←</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px;">Back to dashboard</span>
+      </a>
+      <span style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 17px;">
+        <span style="width: 24px; height: 24px; border-radius: 8px; background: #EFF8F2; box-shadow: 0 2px 5px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 17px; height: 17px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.5px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+        Skillvo
+      </span>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; animation: rise .6s cubic-bezier(.22,1,.36,1) both;">
+    <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 26px; margin: 0;">Credits Wallet</h1>
+    <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0;">Track what you've earned and spent on Skillvo.</p>
+
+    <div style="margin-top: 24px; border-radius: 20px; background: #0B2B26; padding: 32px; color: #FFFFFF;">
+      <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B;">Available balance</span>
+      <div style="font-family: Poppins, sans-serif; font-weight: 800; font-size: 44px; margin-top: 8px;">{{ credits }} <span style="font-size: 18px; font-weight: 600; color: #DAF1DE;">credits</span></div>
+      <div style="display: flex; gap: 12px; margin-top: 20px; align-items: center; flex-wrap: wrap;">
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; background: rgba(255,255,255,.1); border-radius: 999px; padding: 8px 14px;">+{{ earnedTotal }} earned</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; background: rgba(255,255,255,.1); border-radius: 999px; padding: 8px 14px;">-{{ spentTotal }} spent</span>
+        <button type="button" onClick="{{ openBuy }}" style="margin-left: auto; font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; color: #051F20; background: #8EB69B; border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: scale(1.05);">Buy more credits</button>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 20px;">
+      <div style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 14px; padding: 16px; text-align: center;">
+        <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 20px;">6</div>
+        <div style="font-size: 12px; color: #4A544C; margin-top: 4px;">Courses enrolled</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 14px; padding: 16px; text-align: center;">
+        <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 20px;">4</div>
+        <div style="font-size: 12px; color: #4A544C; margin-top: 4px;">Badges earned</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 14px; padding: 16px; text-align: center;">
+        <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 20px;">#12</div>
+        <div style="font-size: 12px; color: #4A544C; margin-top: 4px;">Leaderboard rank</div>
+      </div>
+    </div>
+
+    <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; margin: 32px 0 14px;">Transaction history</h2>
+    <div style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 16px; padding: 8px;">
+      <sc-for list="{{ transactions }}" as="t" hint-placeholder-count="6">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; animation: rowIn .4s cubic-bezier(.22,1,.36,1) {{ t.delay }} both;">
+          <span style="width: 36px; height: 36px; border-radius: 10px; background: {{ t.iconBg }}; display: flex; align-items: center; justify-content: center; font-size: 16px; flex: none;">{{ t.icon }}</span>
+          <div style="flex: 1;">
+            <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px;">{{ t.label }}</div>
+            <div style="font-size: 12px; color: #4A544C; margin-top: 2px;">{{ t.date }}</div>
+          </div>
+          <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: {{ t.amountColor }};">{{ t.amount }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top: 28px; background: #DAF1DE; border-radius: 16px; padding: 24px;">
+      <h3 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px; margin: 0;">Want more credits?</h3>
+      <p style="font-size: 13px; color: #051F20; margin: 8px 0 0;">Complete lessons, climb the leaderboard, or pass a skill test to publish your own course and earn credits back.</p>
+      <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+        <button type="button" onClick="{{ openBuy }}" style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #051F20; background: #FFFFFF; border: 1px solid #235347; border-radius: 10px; padding: 11px 20px; cursor: pointer; transition: background .25s ease;" style-hover="background: #F5D6B4;">Buy credits</button>
+      </div>
+      <sc-if value="{{ buyOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 16px;">
+          <sc-for list="{{ packs }}" as="p" hint-placeholder-count="3">
+            <button type="button" onClick="{{ p.onClick }}" style="text-align: left; background: {{ p.bg }}; border: 2px solid {{ p.border }}; border-radius: 12px; padding: 14px; cursor: pointer;">
+              <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; color: #051F20;">{{ p.credits }}</div>
+              <div style="font-size: 11px; color: #4A544C;">credits</div>
+              <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #235347; margin-top: 8px;">{{ p.price }}</div>
+            </button>
+          </sc-for>
+        </div>
+        <p style="min-height: 18px; margin: 10px 0 0; font-size: 13px; color: #235347; font-weight: 600;">{{ buyNotice }}</p>
+      </sc-if>
+    </div>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(142,182,155,.6); padding: 28px 24px; text-align: center; font-size: 14px; color: #4A544C;">Skillvo — learning that adds up.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;credits&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999},&quot;earnedTotal&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:90,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:9999},&quot;spentTotal&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:15,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:9999}}">
+const TXNS = [
+  { label: 'Completed "Applied ML" module 4', date: '2 days ago', amount: '+12', amountColor: '#235347', icon: '📘', iconBg: '#DAF1DE' },
+  { label: 'Earned "Fast Learner" badge', date: '5 days ago', amount: '+10', amountColor: '#235347', icon: '🏅', iconBg: '#F5D6B4' },
+  { label: 'Enrolled in "Systems Design"', date: '1 week ago', amount: '-15', amountColor: '#C4816B', icon: '🎓', iconBg: '#E7A98F' },
+  { label: 'Completed "Intro to Statistics"', date: '3 weeks ago', amount: '+18', amountColor: '#235347', icon: '📘', iconBg: '#DAF1DE' },
+  { label: 'Sign-up bonus', date: 'March 2026', amount: '+50', amountColor: '#235347', icon: '🎁', iconBg: '#8EB69B' }
+];
+
+const PACKS = [
+  { credits: 50, price: '$4.99' },
+  { credits: 150, price: '$12.99' },
+  { credits: 400, price: '$29.99' }
+];
+
+class Component extends DCLogic {
+
+
+
+  state = { buyOpen: false, buyNotice: ''  };
+
+  renderVals() {
+    const credits = this.props.credits ?? 50;
+    return {
+      credits,
+      earnedTotal: this.props.earnedTotal ?? 90,
+      spentTotal: this.props.spentTotal ?? 15,
+      transactions: TXNS.map((t, i) => ({ ...t, delay: (i * 0.08) + 's' })),
+      buyOpen: this.state.buyOpen,
+      buyNotice: this.state.buyNotice,
+      openBuy: () => { window.location.href = 'Skillvo Buy Credits.dc.html'; },
+      packs: PACKS.map((p) => ({
+        ...p,
+        bg: '#FFFFFF',
+        border: '#8EB69B',
+        onClick: () => this.setState({ buyNotice: `${p.credits} credits added for ${p.price} — check your wallet balance!` })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

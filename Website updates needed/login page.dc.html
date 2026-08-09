@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #0B2B26; text-decoration: none; }
+  a:hover { color: #051F20; }
+  @keyframes driftBlob { 0%,100% { transform: translate3d(0,0,0) rotate(0deg); } 33% { transform: translate3d(3%,-4%,0) rotate(8deg); } 66% { transform: translate3d(-3%,3%,0) rotate(-6deg); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+  @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes checkPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  @keyframes checkDraw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+</style>
+</helmet>
+
+<sc-if value="{{ showSuccess }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; z-index: 50; background: #EFF8F2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; animation: overlayFade .3s ease both;">
+      <span style="width: 84px; height: 84px; border-radius: 50%; background: #163832; display: flex; align-items: center; justify-content: center; animation: checkPop .5s cubic-bezier(.22,1,.36,1) both;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12l5 5L20 6" stroke-dasharray="24" style="animation: checkDraw .5s ease .2s forwards;"></path>
+        </svg>
+      </span>
+      <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 24px; color: #051F20; margin: 0;">{{ successTitle }}</h1>
+      <p style="font-size: 15px; color: #4A544C; margin: 0;">{{ successBody }}</p>
+    </div>
+  </sc-if>
+
+  <div style="position: relative; min-height: 100vh; overflow: clip; display: flex; align-items: center; justify-content: center; padding: 24px;">
+  <video autoplay muted loop playsinline aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; filter: blur(18px) saturate(1.1); transform: scale(1.1); opacity: .35; pointer-events: none;">
+    <source src="uploads/change_coin_to_this_image_dont.mp4" type="video/mp4" />
+  </video>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(239,248,242,.55); z-index: 0; pointer-events: none;"></div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; z-index: 0;">
+    <div style="position: absolute; top: -160px; left: -140px; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #DAF1DE 0%, rgba(218,235,227,0) 68%); animation: driftBlob 26s ease-in-out infinite;"></div>
+    <div style="position: absolute; bottom: -180px; right: -150px; width: 560px; height: 560px; border-radius: 50%; background: radial-gradient(circle at 55% 45%, #8EB69B 0%, rgba(253,232,211,0) 70%); animation: driftBlob 32s ease-in-out infinite reverse;"></div>
+  </div>
+
+  <div style="position: relative; z-index: 1; width: 100%; max-width: 960px; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); border-radius: 24px; overflow: hidden; background: #FFFFFF; border: 1px solid #8EB69B; box-shadow: 0 40px 90px rgba(5,31,32,.22), 0 12px 32px rgba(11,43,38,.16), 0 2px 8px rgba(11,43,38,.1); animation: pop .6s cubic-bezier(.22,1,.36,1) both;">
+
+    <div style="background: #DAF1DE; background-image: url('uploads/education-doodle-pattern.jpg'); background-size: 420px; background-repeat: repeat; padding: 48px 40px; display: flex; flex-direction: column; justify-content: space-between;">
+      <a href="#" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+        <span style="width: 30px; height: 30px; border-radius: 10px; background: #EFF8F2; box-shadow: 0 2px 6px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 22px; height: 22px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.4px;">Skillvo</span>
+      </a>
+      <div style="margin-top: 40px;">
+        <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: clamp(24px,3vw,32px); line-height: 1.2; letter-spacing: -.6px; color: #051F20; margin: 0; text-wrap: pretty;">Start with zero prerequisites. Learn at your own pace.</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #051F20; margin: 14px 0 0; max-width: 34ch;">Earn real credits that matter. Your journey to mastery begins here.</p>
+        <div style="display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #235347; padding: 9px 18px; border-radius: 999px; box-shadow: 0 10px 22px rgba(153,205,216,.5);">
+          <span style="width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; opacity: .85; flex: none;"></span>
+          Sign up today and get 50 credits free
+        </div>
+      </div>
+      <p style="font-size: 13px; color: #0B2B26; margin: 40px 0 0;">Trusted by a fast-growing community of students.</p>
+    </div>
+
+    <div style="padding: 48px 40px; display: flex; flex-direction: column;">
+      <div style="display: flex; gap: 4px; background: #EFF8F2; border: 1px solid #8EB69B; border-radius: 12px; padding: 4px; margin-bottom: 28px;">
+        <button type="button" onClick="{{ showLogin }}" style="flex: 1; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; padding: 10px 0; border: 0; border-radius: 9px; cursor: pointer; transition: background .25s ease, color .25s ease; background: {{ loginTabBg }}; color: {{ loginTabColor }};">Log in</button>
+        <button type="button" onClick="{{ showSignup }}" style="flex: 1; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; padding: 10px 0; border: 0; border-radius: 9px; cursor: pointer; transition: background .25s ease, color .25s ease; background: {{ signupTabBg }}; color: {{ signupTabColor }};">Sign up</button>
+      </div>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+        <div style="animation: rise .5s cubic-bezier(.22,1,.36,1) both;">
+          <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -.5px; color: #051F20; margin: 0;">Welcome back</h1>
+          <p style="font-size: 14px; color: #0B2B26; margin: 8px 0 24px;">Log in to keep earning credits.</p>
+
+          <label style="display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20; margin-bottom: 6px;">Email</label>
+          <input type="email" placeholder="you@example.com" value="{{ email }}" onChange="{{ onEmail }}" onBlur="{{ onEmailBlur }}" style="width: 100%; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid {{ emailBorder }}; border-radius: 12px; padding: 13px 16px; outline: none; margin-bottom: 4px;" style-focus="border-color: #235347; box-shadow: 0 0 0 4px rgba(153,205,216,.3);" />
+          <p style="min-height: 16px; margin: 0 0 12px; font-size: 12px; color: #C4816B;">{{ emailErrorText }}</p>
+
+          <label style="display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20; margin-bottom: 6px;">Password</label>
+          <input type="password" placeholder="••••••••" value="{{ password }}" onChange="{{ onPassword }}" style="width: 100%; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 16px; outline: none;" style-focus="border-color: #235347; box-shadow: 0 0 0 4px rgba(153,205,216,.3);" />
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <a href="#" style="font-size: 13px;">Forgot password?</a>
+          </div>
+
+          <button type="button" onClick="{{ onSubmit }}" style="width: 100%; margin-top: 22px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px; color: #FFFFFF; background: #0B2B26; border: 0; border-radius: 12px; padding: 15px 0; min-height: 48px; cursor: pointer; box-shadow: 0 10px 24px rgba(94,156,170,.45); transition: transform .25s ease, background .3s ease;" style-hover="background: #0B2B26; transform: scale(1.02);" style-active="transform: scale(.98);">Log in</button>
+
+          <div style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
+            <span style="flex: 1; height: 1px; background: #8EB69B;"></span>
+            <span style="font-size: 12px; color: #9AA59B;">or</span>
+            <span style="flex: 1; height: 1px; background: #8EB69B;"></span>
+          </div>
+
+          <button type="button" onClick="{{ onGoogle }}" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Poppins, sans-serif; font-weight: 600; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 0; min-height: 48px; cursor: pointer; transition: background .25s ease, box-shadow .25s ease;" style-hover="background: #EFF8F2; box-shadow: 0 8px 20px rgba(101,113,102,.1);">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"></path>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"></path>
+              <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03z"></path>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .98 4.97L3.95 7.3C4.66 5.17 6.65 3.58 9 3.58z"></path>
+            </svg>
+            Sign in with Google
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+        <div style="animation: rise .5s cubic-bezier(.22,1,.36,1) both;">
+          <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -.5px; color: #051F20; margin: 0;">Create your account</h1>
+          <p style="font-size: 14px; color: #0B2B26; margin: 8px 0 24px;">Sign up today and get 50 credits free.</p>
+
+          <label style="display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20; margin-bottom: 6px;">Name</label>
+          <input type="text" placeholder="Your name" value="{{ name }}" onChange="{{ onName }}" style="width: 100%; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 16px; outline: none; margin-bottom: 16px;" style-focus="border-color: #235347; box-shadow: 0 0 0 4px rgba(153,205,216,.3);" />
+
+          <label style="display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20; margin-bottom: 6px;">Email</label>
+          <input type="email" placeholder="you@example.com" value="{{ email }}" onChange="{{ onEmail }}" onBlur="{{ onEmailBlur }}" style="width: 100%; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid {{ emailBorder }}; border-radius: 12px; padding: 13px 16px; outline: none; margin-bottom: 4px;" style-focus="border-color: #235347; box-shadow: 0 0 0 4px rgba(153,205,216,.3);" />
+          <p style="min-height: 16px; margin: 0 0 12px; font-size: 12px; color: #C4816B;">{{ emailErrorText }}</p>
+
+          <label style="display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20; margin-bottom: 6px;">Password</label>
+          <input type="password" placeholder="Create a password" value="{{ password }}" onChange="{{ onPassword }}" style="width: 100%; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 16px; outline: none;" style-focus="border-color: #235347; box-shadow: 0 0 0 4px rgba(153,205,216,.3);" />
+
+          <button type="button" onClick="{{ onSubmit }}" onMouseMove="{{ onMagneticMove }}" onMouseLeave="{{ onMagneticLeave }}" style="{{ magneticStyle }}" style-hover="background: #7FBDCA;">Create account &amp; claim 50 credits</button>
+
+          <div style="display: flex; align-items: center; gap: 12px; margin: 20px 0;">
+            <span style="flex: 1; height: 1px; background: #8EB69B;"></span>
+            <span style="font-size: 12px; color: #9AA59B;">or</span>
+            <span style="flex: 1; height: 1px; background: #8EB69B;"></span>
+          </div>
+
+          <button type="button" onClick="{{ onGoogle }}" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: Poppins, sans-serif; font-weight: 600; font-size: 15px; color: #051F20; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 0; min-height: 48px; cursor: pointer; transition: background .25s ease, box-shadow .25s ease;" style-hover="background: #EFF8F2; box-shadow: 0 8px 20px rgba(101,113,102,.1);">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"></path>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"></path>
+              <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03z"></path>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .98 4.97L3.95 7.3C4.66 5.17 6.65 3.58 9 3.58z"></path>
+            </svg>
+            Sign up with Google
+          </button>
+        </div>
+      </sc-if>
+
+      <p role="status" style="min-height: 20px; margin: 16px 0 0; font-size: 13px; color: {{ noticeColor }};">{{ notice }}</p>
+
+      <p style="margin-top: auto; padding-top: 20px; font-size: 13px; color: #0B2B26; text-align: center;">
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">New to Skillvo? <a href="#" onClick="{{ showSignup }}">Create an account</a></sc-if>
+        <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">Already have an account? <a href="#" onClick="{{ showLogin }}">Log in</a></sc-if>
+      </p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+
+
+
+  state = { mode: 'login', email: '', password: '', name: '', notice: '', ok: true, emailTouched: false, showSuccess: false, magX: 0, magY: 0  };
+
+  onMagneticMove = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - (r.left + r.width / 2)) * 0.3;
+    const y = (e.clientY - (r.top + r.height / 2)) * 0.3;
+    this.setState({ magX: x, magY: y });
+  };
+
+  onMagneticLeave = () => this.setState({ magX: 0, magY: 0 });
+
+  isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.state.email.trim());
+
+  submit = () => {
+    const ok = this.isEmailValid() && this.state.password.length >= 6;
+    this.setState({
+      ok,
+      emailTouched: true,
+      notice: ok
+        ? (this.state.mode === 'signup' ? 'Account created — 50 credits added to your balance.' : 'Welcome back!')
+        : 'Please enter a valid email and a password of at least 6 characters.'
+    });
+    if (ok) {
+      this.setState({ showSuccess: true });
+      setTimeout(() => { window.location.href = 'Skillvo Home.dc.html'; }, 1600);
+    }
+  };
+
+  renderVals() {
+    const isLogin = this.state.mode === 'login';
+    return {
+      magneticStyle: `width: 100%; margin-top: 22px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px; color: #FFFFFF; background: #235347; border: 0; border-radius: 12px; padding: 15px 0; min-height: 48px; cursor: pointer; box-shadow: 0 10px 24px rgba(153,205,216,.45); transition: transform .15s ease-out, background .3s ease; transform: translate(${this.state.magX}px, ${this.state.magY}px);`,
+      isLogin,
+      isSignup: !isLogin,
+      email: this.state.email,
+      password: this.state.password,
+      name: this.state.name,
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onEmailBlur: () => this.setState({ emailTouched: true }),
+      emailBorder: this.state.emailTouched && this.state.email && !this.isEmailValid() ? '#C4816B' : '#8EB69B',
+      emailErrorText: this.state.emailTouched && this.state.email && !this.isEmailValid() ? 'Enter a valid email address.' : '',
+      onPassword: (e) => this.setState({ password: e.target.value }),
+      onName: (e) => this.setState({ name: e.target.value }),
+      onSubmit: this.submit,
+      notice: this.state.notice,
+      noticeColor: this.state.ok ? '#0B2B26' : '#C4816B',
+      showSuccess: this.state.showSuccess,
+      successTitle: this.state.mode === 'signup' ? 'Account created!' : 'Login successful!',
+      successBody: this.state.mode === 'signup' ? '50 credits added — taking you to Skillvo…' : 'Welcome back — taking you to Skillvo…',
+      onGoogle: () => this.setState({ ok: true, notice: 'Redirecting to Google sign-in…' }),
+      showLogin: () => this.setState({ mode: 'login', notice: '' }),
+      showSignup: () => this.setState({ mode: 'signup', notice: '' }),
+      loginTabBg: isLogin ? '#235347' : 'transparent',
+      loginTabColor: isLogin ? '#FFFFFF' : '#051F20',
+      signupTabBg: !isLogin ? '#235347' : 'transparent',
+      signupTabColor: !isLogin ? '#FFFFFF' : '#051F20'
+    };
+  }
+}
+</script>
+</body>
+</html>

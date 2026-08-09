@@ -1,0 +1,66 @@
+project_id = "skillvo"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+# Local mail catcher — signup confirmations and reset links land here
+# at http://localhost:54324 instead of a real inbox.
+[local_smtp]
+enabled = true
+port = 54324
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = [
+  "http://localhost:3000/auth/callback",
+  "http://localhost:3000/auth/reset-password",
+  "http://localhost:4000/auth/callback",
+  "http://localhost:4000/auth/reset-password",
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+# Email verification: users must click the link before they get a session.
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_OAUTH_CLIENT_ID)"
+secret = "env(GOOGLE_OAUTH_CLIENT_SECRET)"
+redirect_uri = "http://localhost:54321/auth/v1/callback"
+
+[functions.razorpay-create-order]
+verify_jwt = true
+
+[functions.razorpay-verify-payment]
+verify_jwt = true
+
+[functions.google-meet-create]
+verify_jwt = true
+
+[functions.google-oauth-store]
+verify_jwt = true
+
+[functions.sunday-sessions-ensure]
+verify_jwt = true
+
+[functions.chat-assistant]
+verify_jwt = true

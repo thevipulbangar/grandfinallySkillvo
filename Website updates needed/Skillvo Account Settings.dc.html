@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #051F20; color: #FFFFFF; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #8EB69B; text-decoration: none; }
+  a:hover { color: #DAF1DE; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+  <header style="position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); background: rgba(5,31,32,.82); border-bottom: 1px solid rgba(255,255,255,.1);">
+    <div style="max-width: 900px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <a href="Skillvo Profile.dc.html" style="display: flex; align-items: center; gap: 10px; color: #FFFFFF;">
+        <span style="font-size: 18px;">←</span>
+        <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 16px;">Back to profile</span>
+      </a>
+      <span style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 17px;">
+        <span style="width: 24px; height: 24px; border-radius: 8px; background: #EFF8F2; box-shadow: 0 2px 5px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 17px; height: 17px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.5px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+        Skillvo
+      </span>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; animation: rise .6s cubic-bezier(.22,1,.36,1) both;">
+    <h1 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 26px; margin: 0;">Account settings</h1>
+    <p style="font-size: 14px; color: #8EB69B; margin: 8px 0 0;">Manage your login, notifications, and account preferences.</p>
+
+    <div style="background: rgba(255,255,255,.06); border-radius: 14px; padding: 24px; margin-top: 28px;">
+      <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B;">Login &amp; security</div>
+      <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 14px;">
+        <label style="display: block;">
+          <span style="display: block; font-size: 12px; color: #DAF1DE; margin-bottom: 6px;">Email address</span>
+          <input type="email" value="{{ email }}" onChange="{{ onEmail }}" style="width: 100%; font-size: 14px; color: #FFFFFF; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 12px 14px; outline: none;" style-focus="border-color: #8EB69B;" />
+        </label>
+        <label style="display: block;">
+          <span style="display: block; font-size: 12px; color: #DAF1DE; margin-bottom: 6px;">Current password{{ currentPasswordRequiredMark }}</span>
+          <input type="password" value="{{ currentPassword }}" onChange="{{ onCurrentPassword }}" placeholder="Required to change password" style="width: 100%; font-size: 14px; color: #FFFFFF; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 12px 14px; outline: none;" style-focus="border-color: #8EB69B;" />
+        </label>
+        <label style="display: block;">
+          <span style="display: block; font-size: 12px; color: #DAF1DE; margin-bottom: 6px;">New password</span>
+          <input type="password" value="{{ newPassword }}" onChange="{{ onNewPassword }}" placeholder="Leave blank to keep current password" style="width: 100%; font-size: 14px; color: #FFFFFF; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 12px 14px; outline: none;" style-focus="border-color: #8EB69B;" />
+        </label>
+        <sc-if value="{{ passwordError }}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; font-size: 12px; color: #C4816B;">Enter your current password to save a new password.</p>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="background: rgba(255,255,255,.06); border-radius: 14px; padding: 24px; margin-top: 20px;">
+      <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #8EB69B;">Notifications</div>
+      <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 14px;">
+        <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px;">{{ t.label }}</div>
+              <div style="font-size: 12px; color: #8EB69B; margin-top: 2px;">{{ t.desc }}</div>
+            </div>
+            <button type="button" onClick="{{ t.onClick }}" aria-label="Toggle {{ t.label }}" style="width: 44px; height: 26px; border-radius: 999px; border: 0; cursor: pointer; background: {{ t.bg }}; position: relative; transition: background .25s ease; flex: none;">
+              <span style="position: absolute; top: 3px; left: {{ t.knobLeft }}px; width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; transition: left .25s cubic-bezier(.22,1,.36,1);"></span>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: rgba(255,255,255,.06); border-radius: 14px; padding: 24px; margin-top: 20px;">
+      <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #C4816B;">Danger zone</div>
+      <p style="font-size: 13px; color: #DAF1DE; margin: 10px 0 16px;">Deleting your account removes your credits, courses, and progress permanently.</p>
+      <button type="button" style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #FFFFFF; background: #C4816B; border: 0; border-radius: 10px; padding: 12px 22px; cursor: pointer;" style-hover="background: #B06B54;">Delete account</button>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+      <button type="button" onClick="{{ onSaveChanges }}" style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #051F20; background: #8EB69B; border: 0; border-radius: 10px; padding: 13px 26px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: scale(1.03);">Save changes</button>
+    </div>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(255,255,255,.1); padding: 28px 24px; text-align: center; font-size: 14px; color: #8EB69B;">Skillvo — learning that adds up.</footer>
+
+  <sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 10px; background: #8EB69B; color: #051F20; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; padding: 14px 22px; border-radius: 999px; box-shadow: 0 12px 28px rgba(0,0,0,.3); animation: toastIn .35s cubic-bezier(.22,1,.36,1) both;">
+      <span>✓</span> Changes saved — heading to your profile…
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;email&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;amar.bhagwat@email.com&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+
+
+
+  state = { email: this.props.email ?? 'amar.bhagwat@email.com', notif: true, digest: true, marketing: false, currentPassword: '', newPassword: '', passwordError: false  };
+
+  renderVals() {
+    const mk = (key, label, desc) => ({
+      label, desc,
+      bg: this.state[key] ? '#8EB69B' : 'rgba(255,255,255,.15)',
+      knobLeft: this.state[key] ? 22 : 3,
+      onClick: () => this.setState({ [key]: !this.state[key] })
+    });
+    return {
+      email: this.state.email,
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      currentPassword: this.state.currentPassword,
+      onCurrentPassword: (e) => this.setState({ currentPassword: e.target.value, passwordError: false }),
+      currentPasswordRequiredMark: this.state.newPassword ? ' *' : '',
+      newPassword: this.state.newPassword,
+      onNewPassword: (e) => this.setState({ newPassword: e.target.value, passwordError: false }),
+      passwordError: this.state.passwordError,
+      onSaveChanges: () => {
+        if (this.state.newPassword && !this.state.currentPassword) {
+          this.setState({ passwordError: true });
+          return;
+        }
+        this.setState({ passwordError: false, newPassword: '', currentPassword: '', saved: true });
+        setTimeout(() => { window.location.href = 'Skillvo Profile.dc.html'; }, 1400);
+      },
+      saved: this.state.saved,
+      toggles: [
+        mk('notif', 'Course notifications', 'Updates on enrollment and lesson approvals'),
+        mk('digest', 'Weekly digest', 'A summary of your progress and leaderboard rank'),
+        mk('marketing', 'Product announcements', 'New features and platform news')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

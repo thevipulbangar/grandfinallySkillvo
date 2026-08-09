@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFF8F2; color: #051F20; font-family: Lato, -apple-system, "Segoe UI", sans-serif; }
+  a { color: #235347; text-decoration: none; }
+  a:hover { color: #051F20; }
+  @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes floatSlow { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(4deg); } }
+  @keyframes drawerIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</helmet>
+
+<div style="position: relative; min-height: 100vh; overflow-x: clip;">
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMenu }}" style="position: fixed; inset: 0; z-index: 40; background: rgba(5,31,32,.45); animation: overlayIn .25s ease both;"></div>
+    <nav style="position: fixed; top: 0; left: 0; bottom: 0; z-index: 41; width: min(340px, 88vw); background: #FFFFFF; box-shadow: 0 0 60px rgba(5,31,32,.25); padding: 28px 24px; overflow-y: auto; animation: drawerIn .3s cubic-bezier(.22,1,.36,1) both;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="width: 30px; height: 30px; border-radius: 10px; background: #EFF8F2; box-shadow: 0 2px 6px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 22px; height: 22px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+          <div>
+            <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -.3px;">Skillvo Navigation</div>
+            <div style="font-size: 12px; color: #4A544C; margin-top: 2px;">Teach &amp; Learn Platform</div>
+          </div>
+        </div>
+        <button type="button" onClick="{{ closeMenu }}" aria-label="Close navigation" style="width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: #4A544C; font-size: 18px; cursor: pointer;" style-hover="background: #DAF1DE;">×</button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin-top: 22px; padding: 12px 14px; border: 1px solid #8EB69B; border-radius: 14px;">
+        <span style="width: 38px; height: 38px; border-radius: 50%; background: #163832; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; flex: none;">{{ initials }}</span>
+        <span style="flex: 1; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px;">{{ userName }}</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; color: #051F20; background: #F5D6B4; border-radius: 999px; padding: 5px 10px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #235347;"></span>{{ credits }}
+        </span>
+      </div>
+
+      <div style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #4A544C; margin: 24px 0 10px;">Menu categories</div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <sc-for list="{{ menuItems }}" as="item" hint-placeholder-count="6">
+          <a href="{{ item.href }}" onClick="{{ item.onClick }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; color: {{ item.color }}; background: {{ item.bg }}; transition: background .25s ease;" style-hover="background: #DAF1DE;">{{ item.label }}</a>
+        </sc-for>
+      </div>
+
+      <button type="button" style="width: 100%; margin-top: 20px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #163832; border: 0; border-radius: 12px; padding: 14px 0; cursor: pointer; transition: background .3s ease, transform .25s ease;" style-hover="background: #235347; transform: scale(1.02);">+ Publish Course &amp; Skill Test</button>
+
+      <button type="button" style="width: 100%; margin-top: 28px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #C4816B; background: #FFFFFF; border: 1px solid #E7A98F; border-radius: 12px; padding: 13px 0; cursor: pointer; transition: background .25s ease;" style-hover="background: #F5D6B4;">Sign out</button>
+    </nav>
+  </sc-if>
+
+  <header style="position: sticky; top: 0; z-index: 30; backdrop-filter: blur(14px); background: rgba(239,248,242,.82); border-bottom: 1px solid rgba(142,182,155,.5);">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <button type="button" onClick="{{ openMenu }}" aria-label="Open navigation" style="width: 38px; height: 38px; border-radius: 10px; border: 1px solid #8EB69B; background: #FFFFFF; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: background .25s ease;" style-hover="background: #DAF1DE;">
+          <span style="width: 16px; height: 2px; background: #051F20; border-radius: 2px;"></span>
+          <span style="width: 16px; height: 2px; background: #051F20; border-radius: 2px;"></span>
+          <span style="width: 16px; height: 2px; background: #051F20; border-radius: 2px;"></span>
+        </button>
+        <a href="Skillvo Home.dc.html" style="display: flex; align-items: center; gap: 10px; color: #051F20;">
+          <span style="width: 30px; height: 30px; border-radius: 10px; background: #EFF8F2; box-shadow: 0 2px 6px rgba(5,31,32,.18); display: flex; align-items: center; justify-content: center; flex: none;"><span style="width: 22px; height: 22px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px;"><span style="clip-path: polygon(0 0, 100% 0, 0 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 0, 100% 100%); background: #163832;"></span><span style="clip-path: polygon(0 0, 100% 100%, 0 100%); background: #163832;"></span><span style="clip-path: polygon(100% 0, 100% 100%, 0 100%); background: #163832;"></span></span></span>
+          <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.4px;">Skillvo</span>
+        </a>
+        <span style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 12px; color: #163832; background: #8EB69B; padding: 6px 12px; border-radius: 999px; display: none; sm:display: block;">Teach &amp; Learn</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <a href="Skillvo Credit Wallet.dc.html" style="display: flex; align-items: center; gap: 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #051F20; background: #F5D6B4; border-radius: 999px; padding: 8px 16px; transition: background .25s ease;" style-hover="background: #E7A98F;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #235347; flex: none;"></span>
+          {{ credits }} Credits
+        </a>
+        <a href="Skillvo Profile.dc.html" style="display: flex; align-items: center; gap: 10px;">
+          <span style="width: 34px; height: 34px; border-radius: 50%; background: #163832; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px;">{{ initials }}</span>
+          <span style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; color: #051F20;">{{ userName }}</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 32px 24px 40px;">
+
+    <nav style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 0 auto 24px; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px;">
+      <a href="Skillvo Home.dc.html" style="color: #051F20; transition: color .25s ease;" style-hover="color: #163832;">Home</a>
+      <a href="Skillvo Dashboard.dc.html" style="color: #163832; transition: color .25s ease;" style-hover="color: #235347;">Explore</a>
+      <a href="#" onClick="{{ showLearning }}" style="color: #051F20; transition: color .25s ease;" style-hover="color: #163832;">My Learning</a>
+      <a href="#" onClick="{{ showTeaching }}" style="color: #051F20; transition: color .25s ease;" style-hover="color: #163832;">Courses I'm Teaching</a>
+    </nav>
+
+
+    <sc-if value="{{ isExplore }}" hint-placeholder-val="{{ true }}">
+      <section style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+        <div style="flex: 1 1 320px; position: relative;">
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 14px; padding: 14px 18px;">
+            <span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #163832; flex: none;"></span>
+            <input type="text" value="{{ searchQuery }}" onChange="{{ onSearchChange }}" onFocus="{{ onSearchFocus }}" onBlur="{{ onSearchBlur }}" placeholder="Search by skill, title, or instructor…" style="flex: 1; border: 0; outline: none; font-size: 15px; color: #051F20; background: transparent;" />
+          </div>
+          <sc-if value="{{ showSuggestions }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 30; background: #FFFFFF; border: 1px solid #DAF1DE; border-radius: 14px; box-shadow: 0 12px 32px rgba(5,31,32,.15); padding: 10px; animation: pop .2s cubic-bezier(.22,1,.36,1) both;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px 8px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #235347;">
+                <span>✨</span><span>AI recommendations for you</span>
+              </div>
+              <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+                <div onMouseDown="{{ s.onPick }}" style="display: flex; align-items: center; gap: 12px; padding: 10px 10px; border-radius: 10px; cursor: pointer; transition: background .2s ease;" style-hover="background: #EFF8F2;">
+                  <span style="width: 34px; height: 34px; border-radius: 10px; background: {{ s.iconBg }}; display: flex; align-items: center; justify-content: center; flex: none;">{{ s.icon }}</span>
+                  <div style="min-width: 0;">
+                    <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; color: #051F20;">{{ s.title }}</div>
+                    <div style="font-size: 12px; color: #4A544C;">{{ s.reason }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <button type="button" style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; color: #163832; background: #8EB69B; border: 0; border-radius: 14px; padding: 14px 22px; cursor: pointer;">Filters</button>
+      </section>
+
+      <section style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="6">
+          <button type="button" onClick="{{ cat.onClick }}" style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; padding: 9px 18px; border-radius: 999px; border: 1px solid #8EB69B; cursor: pointer; background: {{ cat.bg }}; color: {{ cat.color }}; transition: background .25s ease, color .25s ease;">{{ cat.label }}</button>
+        </sc-for>
+      </section>
+
+      <section style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="grid-column: 1 / -1; text-align: center; padding: 48px 24px; color: #4A544C; font-size: 14px;">No courses match your search. Try a different keyword or category.</div>
+        </sc-if>
+        <sc-for list="{{ courses }}" as="course" hint-placeholder-count="4">
+          <article data-reveal="{{ $index }}" style="background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 14px; transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;" style-hover="transform: translateY(-6px); box-shadow: 0 22px 44px rgba(11,43,38,.14);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="width: 42px; height: 42px; border-radius: 12px; background: {{ course.iconBg }}; display: flex; align-items: center; justify-content: center;">{{ course.icon }}</span>
+              <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #163832; background: #DAF1DE; padding: 5px 12px; border-radius: 999px;">{{ course.category }}</span>
+            </div>
+            <h3 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 19px; margin: 0; letter-spacing: -.3px;">{{ course.title }}</h3>
+            <p style="font-size: 14px; line-height: 1.55; color: #4A544C; margin: 0; flex: 1;">{{ course.desc }}</p>
+            <div style="display: flex; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid #DAF1DE;">
+              <span style="width: 28px; height: 28px; border-radius: 50%; background: #163832; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 11px; flex: none;">{{ course.teacherInitials }}</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px;">{{ course.teacher }}</div>
+                <div style="font-size: 11px; color: #4A544C;">Verified instructor</div>
+              </div>
+              <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 12px; color: #163832; background: #F5D6B4; border-radius: 999px; padding: 5px 10px;">{{ course.cost }} cr</span>
+            </div>
+            <button type="button" onClick="{{ course.openDetails }}" style="width: 100%; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #163832; border: 0; border-radius: 12px; padding: 13px 0; cursor: pointer; transition: background .3s ease, transform .25s ease;" style-hover="background: #235347; transform: scale(1.02);">View Details</button>
+          </article>
+        </sc-for>
+      </section>
+
+      <sc-if value="{{ detailsCourse }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeDetails }}" style="position: fixed; top: 76px; left: 0; right: 0; bottom: 24px; z-index: 50; background: rgba(5,31,32,.5); display: flex; align-items: center; justify-content: center; padding: 24px; animation: overlayIn .25s ease both;">
+          <div onClick="{{ stopProp }}" style="background: #FFFFFF; border-radius: 20px; max-width: 640px; width: 100%; max-height: 100%; display: flex; flex-direction: column; animation: pop .3s cubic-bezier(.22,1,.36,1) both;">
+          <div style="padding: 36px 36px 0; overflow-y: auto; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="width: 46px; height: 46px; border-radius: 14px; background: {{ detailsCourse.iconBg }}; display: flex; align-items: center; justify-content: center;">{{ detailsCourse.icon }}</span>
+              <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #163832; background: #DAF1DE; padding: 5px 12px; border-radius: 999px;">{{ detailsCourse.category }}</span>
+            </div>
+            <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 22px; margin: 18px 0 0; letter-spacing: -.4px;">{{ detailsCourse.title }}</h2>
+            <p style="font-size: 14px; line-height: 1.6; color: #4A544C; margin: 10px 0 0;">{{ detailsCourse.desc }}</p>
+
+            <h3 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; margin: 22px 0 10px; color: #051F20;">What you'll get</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <sc-for list="{{ detailsCourse.outcomes }}" as="o" hint-placeholder-count="4">
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #235347; margin-top: 7px; flex: none;"></span>
+                  <span style="font-size: 13px; line-height: 1.55; color: #4A544C;">{{ o }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <h3 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; margin: 22px 0 10px; color: #051F20;">About your mentor</h3>
+            <div style="background: #EFF8F2; border: 1px solid #8EB69B; border-radius: 16px; padding: 18px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="width: 44px; height: 44px; border-radius: 50%; background: #163832; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; flex: none;">{{ detailsCourse.teacherInitials }}</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px;">{{ detailsCourse.teacher }}</div>
+                  <div style="font-size: 12px; color: #4A544C;">AI-verified instructor · {{ detailsCourse.category }}</div>
+                </div>
+              </div>
+              <p style="font-size: 13px; line-height: 1.6; color: #4A544C; margin: 12px 0 0;">{{ detailsCourse.teacherBio }}</p>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 18px; padding-bottom: 24px; border-top: 1px solid #DAF1DE;">
+              <span style="font-size: 13px; color: #4A544C;">Enrollment cost</span>
+              <span style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 13px; color: #163832; background: #F5D6B4; border-radius: 999px; padding: 6px 12px;">{{ detailsCourse.cost }} cr</span>
+            </div>
+          </div>
+            <div style="display: flex; gap: 10px; padding: 18px 36px 36px; border-top: 1px solid #DAF1DE; flex: none;">
+              <button type="button" onClick="{{ closeDetails }}" style="flex: 1; font-family: Poppins, sans-serif; font-weight: 600; font-size: 14px; color: #051F20; background: #EFF8F2; border: 1px solid #8EB69B; border-radius: 12px; padding: 13px 0; cursor: pointer;">Cancel</button>
+              <button type="button" onClick="{{ closeDetails }}" style="flex: 1; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #163832; border: 0; border-radius: 12px; padding: 13px 0; cursor: pointer; transition: background .3s ease;" style-hover="background: #235347;">Enroll Now</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isLearning }}" hint-placeholder-val="{{ false }}">
+      <section style="margin-top: 24px; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 18px; padding: 40px 40px 8px;">
+        <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 20px; margin: 0;">My Enrolled Learning Tracks</h2>
+        <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0;">Courses requested using Skillvo Credits and approved by teachers.</p>
+        <div style="margin-top: 24px; border-top: 1px solid #DAF1DE; padding: 44px 20px; text-align: center;">
+          <span style="width: 48px; height: 48px; margin: 0 auto; border-radius: 12px; background: #DAF1DE; display: flex; align-items: center; justify-content: center;">{{ bookIcon }}</span>
+          <h3 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 18px; margin: 16px 0 0;">No enrolled courses yet</h3>
+          <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0; max-width: 44ch; margin-left: auto; margin-right: auto;">Use your {{ credits }} Skillvo Credits to request enrollment in any course on the marketplace.</p>
+          <button type="button" onClick="{{ goExplore }}" style="margin-top: 18px; font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #163832; border: 0; border-radius: 999px; padding: 13px 26px; cursor: pointer; transition: background .3s ease, transform .25s ease;" style-hover="background: #235347; transform: scale(1.03);">Browse Marketplace Courses</button>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isTeaching }}" hint-placeholder-val="{{ false }}">
+      <section style="margin-top: 24px; background: #FFFFFF; border: 1px solid #8EB69B; border-radius: 18px; padding: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;">
+        <div>
+          <h2 style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 20px; margin: 0;">Courses You Teach</h2>
+          <p style="font-size: 14px; color: #4A544C; margin: 8px 0 0;">Manage your published curriculum and student enrollment approvals.</p>
+        </div>
+        <a href="Skillvo Publish Course.dc.html" style="font-family: Poppins, sans-serif; font-weight: 700; font-size: 14px; color: #FFFFFF; background: #163832; border: 0; border-radius: 12px; padding: 13px 22px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: background .3s ease, transform .25s ease; text-decoration: none;" style-hover="background: #235347; transform: scale(1.03);">
+          <span style="font-size: 16px;">+</span> Publish New Course
+        </a>
+      </section>
+    </sc-if>
+  </main>
+
+  <footer style="position: relative; z-index: 1; border-top: 1px solid rgba(142,182,155,.6); padding: 28px 24px; text-align: center; font-size: 14px; color: #4A544C;">Skillvo — learning that adds up.</footer>
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;userName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Amar Bhagwat&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;credits&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:999},&quot;creditGoal&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:10,&quot;max&quot;:9999,&quot;section&quot;:&quot;Progress&quot;}}">
+const ic = (paths, stroke) => React.createElement('svg', { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' }, paths.map((d, i) => React.createElement('path', { key: i, d })));
+
+const CATS = ['All', 'Engineering', 'AI & Data', 'Design', 'Security', 'Music', 'Arts', 'Crafts', 'Beginner'];
+const COURSES = [
+  { title: 'Systems Design Fundamentals', desc: 'Hands-on practical curriculum with interactive exercises and mentor guidance.', teacher: 'Vipul Bangar', teacherInitials: 'VB', category: 'Engineering', cost: 15, iconBg: '#DAF1DE', icon: ic(['M4 6h16', 'M4 12h16', 'M4 18h10'], '#163832') },
+  { title: 'Applied Machine Learning', desc: 'From regression to neural nets, with real datasets and weekly projects.', teacher: 'Amara Chen', teacherInitials: 'AC', category: 'AI & Data', cost: 22, iconBg: '#F5D6B4', icon: ic(['M12 3a9 9 0 1 0 9 9', 'M12 7v5l4 2'], '#C99A6B') },
+  { title: 'Product Design Studio', desc: 'Design real interfaces, get critiqued, ship a portfolio piece.', teacher: 'Rosa Diaz', teacherInitials: 'RD', category: 'Design', cost: 18, iconBg: '#E7A98F', icon: ic(['M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', 'M4 21a8 8 0 0 1 16 0'], '#C4816B') },
+  { title: 'Intro to Cybersecurity', desc: 'Threat modeling, network basics, and hands-on labs from day one.', teacher: 'Devon Lee', teacherInitials: 'DL', category: 'Security', cost: 12, iconBg: '#DAF1DE', icon: ic(['M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7z'], '#163832') },
+  { title: 'Music Theory & Production', desc: 'Chords, rhythm, and beat-making basics using free production tools.', teacher: 'Noah Reyes', teacherInitials: 'NR', category: 'Music', cost: 14, iconBg: '#F5D6B4', icon: ic(['M9 18V5l12-2v13', 'M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z', 'M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z'], '#C99A6B') },
+  { title: 'Watercolor & Illustration', desc: 'Build a daily sketch habit and learn color theory through guided projects.', teacher: 'Priya Nair', teacherInitials: 'PN', category: 'Arts', cost: 10, iconBg: '#E7A98F', icon: ic(['M12 20c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12z', 'M9 8a3 3 0 0 0 3 3'], '#C4816B') },
+  { title: 'Crochet & Fiber Crafts', desc: 'Learn stitches, patterns, and finish your first amigurumi piece.', teacher: 'Elena Marsh', teacherInitials: 'EM', category: 'Crafts', cost: 8, iconBg: '#DAF1DE', icon: ic(['M12 21s-8-4.5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6.5-8 11-8 11z'], '#163832') }
+];
+
+class Component extends DCLogic {
+
+
+
+  state = { tab: 'explore', cat: 'All', menuOpen: false, detailsCourse: null, searchQuery: '', searchFocused: false  };
+
+  onSearchChange = (e) => this.setState({ searchQuery: e.target.value });
+  onSearchFocus = () => this.setState({ searchFocused: true });
+  onSearchBlur = () => this.setState({ searchFocused: false });
+
+  openDetails = (course) => {
+    this.setState({ detailsCourse: course });
+    document.body.style.overflow = 'hidden';
+  };
+  closeDetails = () => {
+    this.setState({ detailsCourse: null });
+    document.body.style.overflow = '';
+  };
+  stopProp = (e) => e.stopPropagation();
+
+  renderVals() {
+    const credits = this.props.credits ?? 50;
+    const creditGoal = this.props.creditGoal ?? 100;
+    const pct = Math.round((credits / creditGoal) * 100);
+    const filteredCourses = COURSES.filter((c) => {
+      const catOk = this.state.cat === 'All' || c.category === this.state.cat;
+      const q = this.state.searchQuery.trim().toLowerCase();
+      const qOk = !q || c.title.toLowerCase().includes(q) || c.category.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q);
+      return catOk && qOk;
+    });
+    return {
+      noResults: filteredCourses.length === 0,
+      searchQuery: this.state.searchQuery,
+      onSearchChange: this.onSearchChange,
+      onSearchFocus: this.onSearchFocus,
+      onSearchBlur: this.onSearchBlur,
+      showSuggestions: this.state.searchFocused,
+      suggestions: (() => {
+        const q = this.state.searchQuery.trim().toLowerCase();
+        const pool = q
+          ? COURSES.filter((c) => c.title.toLowerCase().includes(q) || c.category.toLowerCase().includes(q) || c.teacher.toLowerCase().includes(q))
+          : COURSES;
+        const list = (pool.length ? pool : COURSES).slice(0, 4);
+        return list.map((c) => ({
+          title: c.title,
+          icon: c.icon,
+          iconBg: c.iconBg,
+          reason: q ? `Matches "${q}" · ${c.category}` : `Recommended for you · ${c.category}`,
+          onPick: () => this.setState({ searchQuery: c.title }),
+        }));
+      })(),
+      credits,
+      creditGoal,
+      creditPct: pct,
+      creditsToGo: Math.max(0, creditGoal - credits),
+      userName: this.props.userName ?? 'Amar Bhagwat',
+      initials: (this.props.userName ?? 'Amar Bhagwat').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+      menuOpen: this.state.menuOpen,
+      openMenu: () => this.setState({ menuOpen: true }),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      menuItems: [
+        { label: 'Explore Courses', key: 'explore', href: '#', onClick: () => this.setState({ tab: 'explore', menuOpen: false }) },
+        { label: 'My Enrolled Courses', key: 'learning', href: '#', onClick: () => this.setState({ tab: 'learning', menuOpen: false }) },
+        { label: "Courses I'm Teaching", key: 'teaching', href: '#', onClick: () => this.setState({ tab: 'teaching', menuOpen: false }) },
+        { label: `Credits Wallet (${credits})`, key: null, href: 'Skillvo Credit Wallet.dc.html' },
+        { label: 'Leaderboard & Rankings', key: null, href: 'Skillvo Leaderboard.dc.html' },
+        { label: 'Settings', key: null, href: 'Skillvo Profile.dc.html' }
+      ].map((m) => ({
+        ...m,
+        bg: m.key && this.state.tab === m.key ? '#163832' : 'transparent',
+        color: m.key && this.state.tab === m.key ? '#FFFFFF' : '#051F20'
+      })),
+      tabs: [
+        { key: 'explore', label: 'Explore Courses' },
+        { key: 'learning', label: 'My Learning (0)' },
+        { key: 'teaching', label: "Courses I'm Teaching" }
+      ].map((t, i) => {
+        const active = this.state.tab === t.key;
+        const scale = this.state.tabHover === i ? 1.12 : this.state.tabHover !== -1 && Math.abs(this.state.tabHover - i) === 1 ? 1.04 : 1;
+        return {
+          ...t,
+          onClick: () => this.setState({ tab: t.key }),
+          onEnter: () => this.onTabDockMove(i),
+          style: `font-family: Poppins, sans-serif; font-weight: 600; font-size: ${14 * scale}px; padding: ${10 * scale}px ${18 * scale}px; border-radius: 12px; border: 0; cursor: pointer; white-space: nowrap; background: ${active ? '#163832' : 'transparent'}; color: ${active ? '#FFFFFF' : '#051F20'}; transition: all .2s cubic-bezier(.22,1,.36,1);`,
+        };
+      }),
+      categories: CATS.map((label) => ({ label, onClick: () => this.setState({ cat: label }), bg: this.state.cat === label ? '#163832' : '#FFFFFF', color: this.state.cat === label ? '#FFFFFF' : '#051F20' })),
+      courses: filteredCourses.map((c) => {
+        const enriched = {
+          ...c,
+          outcomes: c.outcomes ?? [
+            `A structured path through ${c.category.toLowerCase()} fundamentals with hands-on projects.`,
+            'Direct feedback and code/work reviews from your mentor.',
+            'A completion credential you can carry toward Skillvo credits.',
+            'Lifetime access to lesson recordings and materials.',
+          ],
+          teacherBio: c.teacherBio ?? `${c.teacher} is an AI-verified Skillvo instructor with a strong track record teaching ${c.category.toLowerCase()}, focused on practical, project-based learning.`,
+        };
+        return { ...enriched, openDetails: () => this.openDetails(enriched) };
+      }),
+      detailsCourse: this.state.detailsCourse,
+      closeDetails: this.closeDetails,
+      stopProp: this.stopProp,
+      isExplore: this.state.tab === 'explore',
+      isLearning: this.state.tab === 'learning',
+      isTeaching: this.state.tab === 'teaching',
+      showLearning: () => this.setState({ tab: 'learning' }),
+      showTeaching: () => this.setState({ tab: 'teaching' }),
+      goExplore: () => this.setState({ tab: 'explore' }),
+      bookIcon: ic(['M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2z', 'M20 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2z'], '#163832')
+    };
+  }
+}
+</script>
+</body>
+</html>

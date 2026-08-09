@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap');
+
+/*
+ * Skillvo design tokens, taken from the approved mockups.
+ *
+ * Poppins carries every heading, label, button and number; Lato carries body
+ * copy. The palette is a deep-green scale with a warm sand accent reserved for
+ * anything to do with credits — that pairing is the brand, so resist using
+ * sand for ordinary emphasis.
+ */
+@theme {
+  --font-heading: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-body: 'Lato', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Greens, darkest to lightest */
+  --color-ink: #051F20;        /* primary text */
+  --color-forest: #0B2B26;     /* hero buttons, links */
+  --color-pine: #163832;       /* primary action, avatars */
+  --color-moss: #235347;       /* hover state, progress fill */
+  --color-sage: #8EB69B;       /* borders, secondary buttons */
+  --color-mint: #DAF1DE;       /* tinted surfaces, chips */
+  --color-haze: #EFF8F2;       /* page background */
+
+  /* Muted text */
+  --color-slate: #4A544C;      /* secondary text */
+  --color-mist: #9AA59B;       /* tertiary text, footer */
+
+  /* Sand accent — credits and wallet only */
+  --color-sand: #F5D6B4;
+  --color-apricot: #E7A98F;
+  --color-clay: #C4816B;
+  --color-bronze: #C99A6B;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background-color: var(--color-haze);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Motion vocabulary from the mockups. Every entrance uses one of these. */
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+@keyframes rowIn { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes barFill { from { width: 0; } }
+@keyframes drawerIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes crownPulse { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.12) rotate(-6deg); } }
+@keyframes driftBlob { 0%,100% { transform: translate3d(0,0,0) rotate(0deg); } 33% { transform: translate3d(3%,-4%,0) rotate(8deg); } 66% { transform: translate3d(-3%,3%,0) rotate(-6deg); } }
+@keyframes floatA { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-18px) rotate(6deg); } }
+@keyframes floatB { 0%,100% { transform: translateY(0); } 50% { transform: translateY(14px); } }
+@keyframes glow { 0%,100% { box-shadow: 0 10px 26px rgba(0,0,0,.35); } 50% { box-shadow: 0 10px 34px rgba(35,83,71,.75); } }
+@keyframes charFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes loaderDot { 0%,100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(-8px); opacity: 1; } }
+@keyframes checkPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes checkDraw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+@keyframes crownFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes podiumUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+@keyframes flamePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+@keyframes confettiFall { from { transform: translateY(-10px) rotate(0deg); opacity: 1; } to { transform: translateY(220px) rotate(360deg); opacity: 0; } }
+
+.animate-rise { animation: rise .7s cubic-bezier(.22,1,.36,1) both; }
+.animate-pop { animation: pop .3s cubic-bezier(.22,1,.36,1) both; }
+.animate-row-in { animation: rowIn .5s cubic-bezier(.22,1,.36,1) both; }
+.animate-drawer-in { animation: drawerIn .3s cubic-bezier(.22,1,.36,1) both; }
+.animate-overlay-in { animation: overlayIn .25s ease both; }
+.animate-crown { animation: crownPulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+}
