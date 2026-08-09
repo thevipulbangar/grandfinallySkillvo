@@ -784,8 +784,10 @@ export default function App() {
     const req = enrollmentRequests.find(r => r.id === requestId);
     if (!req) return;
 
-    // decide_enrollment pays the instructor on approval or refunds the student
-    // on decline, and awards XP — none of which the client may do itself.
+    // decide_enrollment refunds the student on decline and awards the
+    // instructor XP on approval — the instructor's credit payout now happens
+    // in complete_enrollment, once the student actually finishes the course,
+    // not just on approval.
     if (isSupabaseConfigured && authedUserId) {
       void (async () => {
         try {
@@ -794,7 +796,7 @@ export default function App() {
           await refreshCourses(authedUserId);
           showToast(
             action === 'approve'
-              ? `Approved ${req.studentName}'s enrollment! You earned +${req.creditFee} Credits.`
+              ? `Approved ${req.studentName}'s enrollment! You'll earn +${req.creditFee} credits once they complete the course.`
               : 'Declined enrollment request.',
           );
         } catch (err) {
@@ -809,24 +811,6 @@ export default function App() {
       prev.map(r => r.id === requestId ? { ...r, status: action === 'approve' ? 'approved' : 'declined' } : r)
     );
 
-    // If logged in teacher approved, reward teacher with course credit fee!
-    if (currentUser && currentUser.id === req.instructorId && action === 'approve') {
-      setCurrentUser(prev => prev ? {
-        ...prev,
-        credits: prev.credits + req.creditFee,
-        notifications: [
-          {
-            id: `n-${Date.now()}`,
-            message: `🎉 Approved ${req.studentName} for "${req.courseTitle}". Earned +${req.creditFee} Credits!`,
-            time: 'Just now',
-            unread: true,
-            type: 'credit_added',
-          },
-          ...prev.notifications
-        ]
-      } : null);
-    }
-
     // Update marketplace student count if approved
     if (action === 'approve') {
       setMarketplaceCourses(prev =>
@@ -836,7 +820,7 @@ export default function App() {
 
     showToast(
       action === 'approve'
-        ? `Approved ${req.studentName}'s enrollment! You earned +${req.creditFee} Credits.`
+        ? `Approved ${req.studentName}'s enrollment! You'll earn +${req.creditFee} credits once they complete the course.`
         : `Declined enrollment request.`
     );
   };

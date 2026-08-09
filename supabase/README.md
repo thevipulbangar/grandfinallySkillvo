@@ -161,7 +161,10 @@ Same for `xp_points` / `level` (`award_xp`) and `courses.students_count`.
 
 **Enrollment is an RPC, not an insert.** `request_enrollment` debits the
 student, creates the row and notifies the instructor in one transaction.
-`decide_enrollment` pays the instructor on approval or refunds on decline.
+`decide_enrollment` awards the instructor XP on approval or refunds the
+student on decline — it does not pay out credits. That happens in
+`complete_enrollment`, alongside the student's own completion bonus, so an
+instructor is only paid once a student actually finishes the course.
 `enrollments` therefore has a SELECT policy only.
 
 **Tables with no RLS policy are service-role only** — by design, not oversight:

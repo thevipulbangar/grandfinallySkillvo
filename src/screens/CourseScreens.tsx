@@ -216,7 +216,7 @@ export function TeachingScreen({
                       Requested <strong>{request.courseTitle}</strong>
                     </div>
                     <div className="text-[11px] text-sand font-bold mt-0.5">
-                      You earn +{request.creditFee} credits on approval
+                      You earn +{request.creditFee} credits once they complete the course
                     </div>
                   </div>
                 </div>
