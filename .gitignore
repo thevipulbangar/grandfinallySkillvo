@@ -10,5 +10,6 @@ coverage/
 # Supabase CLI local state
 supabase/.temp/
 
-# Local scratch recordings / screenshots
+# Local scratch recordings / screenshots — but not real app assets under public/
 *.mp4
+!/public/uploads/hero-bg-video.mp4
