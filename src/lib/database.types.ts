@@ -111,7 +111,15 @@ export type SkillTestAttemptRow = {
   score: number;
   total: number;
   passed: boolean;
+  answers: unknown;
   attempted_at: string;
+}
+
+export type SkillTestBanRow = {
+  user_id: string;
+  category: string;
+  banned_until: string;
+  created_at: string;
 }
 
 export type CreditTransactionRow = {
@@ -285,6 +293,7 @@ export interface Database {
       enrollments: Table<EnrollmentRow>;
       topic_quiz_questions: Table<TopicQuizQuestionRow>;
       skill_test_attempts: Table<SkillTestAttemptRow>;
+      skill_test_bans: Table<SkillTestBanRow>;
       credit_transactions: Table<CreditTransactionRow>;
       payments: Table<PaymentRow>;
       live_sessions: Table<LiveSessionRow>;
@@ -308,7 +317,13 @@ export interface Database {
       };
       complete_enrollment: { Args: { p_enrollment_id: string }; Returns: EnrollmentRow };
       record_skill_test: {
-        Args: { p_category: string; p_score: number; p_total: number };
+        Args: {
+          p_category: string;
+          p_score: number;
+          p_total: number;
+          p_answers?: unknown;
+          p_passed?: boolean;
+        };
         Returns: SkillTestAttemptRow;
       };
       ensure_profile: { Args: Record<string, never>; Returns: ProfileRow };

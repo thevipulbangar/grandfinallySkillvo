@@ -5,6 +5,18 @@ export interface QuizQuestion {
   correctAnswer: number;
 }
 
+/** One answered question in a sequential skill test, with per-question timestamps. */
+export interface QuizAnswerLogEntry {
+  questionIndex: number;
+  question: string;
+  options: string[];
+  selectedOption: number;
+  correctAnswer: number;
+  correct: boolean;
+  shownAt: string;
+  answeredAt: string;
+}
+
 export interface Course {
   id: string;
   title: string;

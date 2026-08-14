@@ -8,6 +8,7 @@ import {
   UserProfile,
   LeaderboardUser,
   QuizQuestion,
+  QuizAnswerLogEntry,
 } from './types';
 
 import {
@@ -40,7 +41,16 @@ import {
   subscribeToProfile,
 } from './services/profiles';
 import { purchaseCredits } from './services/payments';
-import { deleteCourse, listCourses, listTaughtCourses, publishCourse, recordSkillTest } from './services/courses';
+import {
+  deleteCourse,
+  getPastQuestions,
+  getSkillTestBan,
+  listCourses,
+  listTaughtCourses,
+  publishCourse,
+  recordSkillTest,
+  SkillTestBannedError,
+} from './services/courses';
 import { generateQuiz } from './services/quiz';
 import {
   decideEnrollment,
@@ -431,22 +441,29 @@ export default function App() {
     }
   };
   
-  // Teacher Quiz State
-  const [currentQuizAnswers, setCurrentQuizAnswers] = useState<Record<number, number>>({});
+  // Teacher Quiz State — a sequential, one-question-at-a-time exam. Each
+  // question is answered exactly once (right or wrong both advance) and the
+  // whole thing auto-submits on the last answer.
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [questionShownAt, setQuestionShownAt] = useState<string | null>(null);
+  const [questionLog, setQuestionLog] = useState<QuizAnswerLogEntry[]>([]);
   const [quizScore, setQuizScore] = useState<number | null>(null);
-  // AI-generated quiz for the course just being published (Groq, via the
+  // AI-generated quiz for the course just being published (Gemini, via the
   // generate-quiz edge function). Falls back to the static bank below when
   // generation isn't available or fails.
   const [aiQuiz, setAiQuiz] = useState<QuizQuestion[] | null>(null);
   const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false);
+  const [isSubmittingQuiz, setIsSubmittingQuiz] = useState(false);
+  // Set when the server reports the current user is still serving a 2-month
+  // cooldown for this category's test — blocks quiz generation entirely.
+  const [testBanUntil, setTestBanUntil] = useState<string | null>(null);
 
   // The quiz bank holds a different number of questions per category, so the
-  // "answered everything" gate and the pass mark are both derived from the
-  // list actually rendered. Hardcoding 3 left every category with a shorter
-  // quiz — currently all of them — unable to ever enable the publish button.
+  // pass mark is derived from the list actually rendered. Hardcoding 3 left
+  // every category with a shorter quiz — currently all of them — unable to
+  // ever enable the publish button.
   const activeQuiz = aiQuiz ?? TOPIC_QUIZZES[newCourseCategory] ?? TOPIC_QUIZZES.Engineering;
   const quizPassMark = Math.max(1, Math.ceil((activeQuiz.length * 2) / 3));
-  const quizAnsweredCount = Object.keys(currentQuizAnswers).length;
 
   // Course content: the teacher's manager and the student's classroom, each
   // opened for one course at a time.
@@ -832,129 +849,210 @@ export default function App() {
     setNewCourseCategory('Engineering');
     setNewCourseDesc('');
     setNewCourseFee(15);
-    setCurrentQuizAnswers({});
+    setCurrentQuestionIndex(0);
+    setQuestionShownAt(null);
+    setQuestionLog([]);
     setQuizScore(null);
     setAiQuiz(null);
+    setTestBanUntil(null);
     setScreen('publish');
+  };
+
+  // Bail out of an in-progress test — no attempt is recorded, so it doesn't
+  // count toward the ban and can be retried immediately.
+  const handleEndTest = () => {
+    setPublishStep('details');
+    setCurrentQuestionIndex(0);
+    setQuestionShownAt(null);
+    setQuestionLog([]);
+    setQuizScore(null);
+    setAiQuiz(null);
+    showToast('Test ended — no attempt was recorded.');
   };
 
   const handleProceedToSkillTest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCourseTitle.trim()) return;
 
-    setCurrentQuizAnswers({});
+    setCurrentQuestionIndex(0);
+    setQuestionLog([]);
+    setQuizScore(null);
     setAiQuiz(null);
+    setTestBanUntil(null);
+    setQuestionShownAt(null);
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && authedUserId) {
       setIsGeneratingQuiz(true);
       try {
+        const banUntil = await getSkillTestBan(authedUserId, newCourseCategory);
+        if (banUntil) {
+          setTestBanUntil(banUntil);
+          setPublishStep('quiz');
+          return;
+        }
+
+        const avoidQuestions = await getPastQuestions(authedUserId, newCourseCategory);
         const questions = await generateQuiz({
           title: newCourseTitle,
           category: newCourseCategory,
           description: newCourseDesc,
+          avoidQuestions,
         });
         setAiQuiz(questions);
+        setQuestionShownAt(new Date().toISOString());
       } catch (err) {
         console.error('[skillvo] AI quiz generation failed, falling back to the standard test', err);
         showToast('Could not generate an AI quiz — using the standard skill test instead.');
+        setQuestionShownAt(new Date().toISOString());
       } finally {
         setIsGeneratingQuiz(false);
       }
+    } else {
+      setQuestionShownAt(new Date().toISOString());
     }
 
     setPublishStep('quiz');
   };
 
-  const handleQuizAnswerSelect = (qIndex: number, optionIndex: number) => {
-    setCurrentQuizAnswers(prev => ({ ...prev, [qIndex]: optionIndex }));
+  // A question is answered exactly once — right or wrong both lock it in and
+  // move to the next one. Clicks are only ever routed here for the currently
+  // displayed question, so there's no index to check against.
+  const handleQuizAnswerSelect = (optionIndex: number) => {
+    const question = activeQuiz[currentQuestionIndex];
+    if (!question || !questionShownAt) return;
+
+    const answeredAt = new Date().toISOString();
+    const entry: QuizAnswerLogEntry = {
+      questionIndex: currentQuestionIndex,
+      question: question.question,
+      options: question.options,
+      selectedOption: optionIndex,
+      correctAnswer: question.correctAnswer,
+      correct: optionIndex === question.correctAnswer,
+      shownAt: questionShownAt,
+      answeredAt,
+    };
+
+    const updatedLog = [...questionLog, entry];
+    setQuestionLog(updatedLog);
+
+    if (currentQuestionIndex >= activeQuiz.length - 1) {
+      void handleSubmitSkillQuiz(updatedLog);
+    } else {
+      setCurrentQuestionIndex((idx) => idx + 1);
+      setQuestionShownAt(new Date().toISOString());
+    }
   };
 
-  const handleSubmitSkillQuiz = () => {
-    let correct = 0;
-    activeQuiz.forEach((q, idx) => {
-      if (currentQuizAnswers[idx] === q.correctAnswer) {
-        correct += 1;
-      }
-    });
-
+  const handleSubmitSkillQuiz = async (log: QuizAnswerLogEntry[]) => {
+    const correct = log.filter((a) => a.correct).length;
+    const passed = correct >= quizPassMark;
     setQuizScore(correct);
 
-    if (correct >= quizPassMark) {
-      // Teacher PASSED Skill Verification! Publish Course
-      if (!currentUser) return;
+    if (!currentUser) return;
 
-      // Server-backed publish. The skill-test attempt is logged too, so
-      // verified_teacher_topic reflects a result the server recorded rather
-      // than a claim from the browser.
-      if (isSupabaseConfigured && authedUserId) {
-        void (async () => {
-          try {
-            await recordSkillTest(newCourseCategory, correct, activeQuiz.length);
-            await publishCourse(authedUserId, {
-              title: newCourseTitle,
-              category: newCourseCategory,
-              description:
-                newCourseDesc ||
-                'Hands-on practical curriculum with interactive exercises and teacher guidance.',
-              creditFee: newCourseFee,
-              lessonsCount: 12,
-              level: 'Intermediate',
-              verifiedTeacherTopic: true,
-            });
-            await refreshCourses(authedUserId);
-            await loadCurrentUser(authedUserId);
-            setPublishStep('success');
-            triggerCelebrationConfetti();
-            showToast(`Verified & Published "${newCourseTitle}"!`);
-          } catch (err) {
-            showToast(toFriendlyError(err));
-          }
-        })();
+    setIsSubmittingQuiz(true);
+    try {
+      await submitSkillQuizResult(correct, passed, log);
+    } finally {
+      setIsSubmittingQuiz(false);
+    }
+  };
+
+  const submitSkillQuizResult = async (correct: number, passed: boolean, log: QuizAnswerLogEntry[]) => {
+    // Server-backed publish. The skill-test attempt (with its per-question
+    // timestamp log) is always recorded — on pass it gates publishing, on
+    // fail it's what triggers the 2-month category ban server-side.
+    if (isSupabaseConfigured && authedUserId) {
+      try {
+        await recordSkillTest(newCourseCategory, correct, activeQuiz.length, passed, log);
+      } catch (err) {
+        if (err instanceof SkillTestBannedError) {
+          setTestBanUntil(err.bannedUntil);
+          showToast('You are currently banned from retaking this test.');
+          return;
+        }
+        showToast(toFriendlyError(err));
         return;
       }
 
-      const newCourse: Course = {
-        id: `course-${Date.now()}`,
-        title: newCourseTitle,
-        category: newCourseCategory,
-        description: newCourseDesc || 'Hands-on practical curriculum with interactive exercises and teacher guidance.',
-        instructorId: currentUser.id,
-        instructorName: currentUser.name,
-        instructorAvatar: currentUser.avatar,
-        creditFee: newCourseFee,
-        studentsCount: 0,
-        verifiedTeacherTopic: true,
-        lessonsCount: 12,
-        rating: '5.0',
-        level: 'Intermediate',
-      };
+      if (!passed) {
+        showToast(
+          `Skill test failed (${correct}/${activeQuiz.length}, need ${quizPassMark}). ` +
+            `You're banned from retaking the ${newCourseCategory} test for 2 months.`,
+        );
+        return;
+      }
 
-      setMarketplaceCourses(prev => [newCourse, ...prev]);
-      setPublishStep('success');
-      triggerCelebrationConfetti();
+      try {
+        await publishCourse(authedUserId, {
+          title: newCourseTitle,
+          category: newCourseCategory,
+          description:
+            newCourseDesc ||
+            'Hands-on practical curriculum with interactive exercises and teacher guidance.',
+          creditFee: newCourseFee,
+          lessonsCount: 12,
+          level: 'Intermediate',
+          verifiedTeacherTopic: true,
+        });
+        await refreshCourses(authedUserId);
+        await loadCurrentUser(authedUserId);
+        setPublishStep('success');
+        triggerCelebrationConfetti();
+        showToast(`Verified & Published "${newCourseTitle}"!`);
+      } catch (err) {
+        showToast(toFriendlyError(err));
+      }
+      return;
+    }
 
-      // Add notification for teacher
-      setCurrentUser(prev => prev ? {
-        ...prev,
-        notifications: [
-          {
-            id: `n-${Date.now()}`,
-            message: `✨ Skill Verification Passed! Course "${newCourseTitle}" is now live on Skillvo Marketplace.`,
-            time: 'Just now',
-            unread: true,
-            type: 'course_published',
-          },
-          ...prev.notifications
-        ]
-      } : null);
-
-      showToast(`Verified & Published "${newCourseTitle}"!`);
-    } else {
+    // Offline/demo fallback (no Supabase configured): no ban persistence is
+    // possible without a backend, so just reflect pass/fail locally.
+    if (!passed) {
       showToast(
         `Skill test failed (${correct}/${activeQuiz.length}, need ${quizPassMark}). ` +
           'Review the topic materials and try again.',
       );
+      return;
     }
+
+    const newCourse: Course = {
+      id: `course-${Date.now()}`,
+      title: newCourseTitle,
+      category: newCourseCategory,
+      description: newCourseDesc || 'Hands-on practical curriculum with interactive exercises and teacher guidance.',
+      instructorId: currentUser.id,
+      instructorName: currentUser.name,
+      instructorAvatar: currentUser.avatar,
+      creditFee: newCourseFee,
+      studentsCount: 0,
+      verifiedTeacherTopic: true,
+      lessonsCount: 12,
+      rating: '5.0',
+      level: 'Intermediate',
+    };
+
+    setMarketplaceCourses(prev => [newCourse, ...prev]);
+    setPublishStep('success');
+    triggerCelebrationConfetti();
+
+    // Add notification for teacher
+    setCurrentUser(prev => prev ? {
+      ...prev,
+      notifications: [
+        {
+          id: `n-${Date.now()}`,
+          message: `✨ Skill Verification Passed! Course "${newCourseTitle}" is now live on Skillvo Marketplace.`,
+          time: 'Just now',
+          unread: true,
+          type: 'course_published',
+        },
+        ...prev.notifications
+      ]
+    } : null);
+
+    showToast(`Verified & Published "${newCourseTitle}"!`);
   };
 
   const handleSignOut = async () => {
@@ -1250,14 +1348,15 @@ export default function App() {
               }}
               categories={PUBLISH_CATEGORIES}
               quiz={activeQuiz}
-              answers={currentQuizAnswers}
+              currentQuestionIndex={currentQuestionIndex}
+              questionShownAt={questionShownAt}
               onAnswer={handleQuizAnswerSelect}
               onContinue={() => handleProceedToSkillTest({ preventDefault: () => {} } as React.FormEvent)}
-              onBack={() => setPublishStep('details')}
-              onSubmitQuiz={handleSubmitSkillQuiz}
               onExit={() => setScreen('teaching')}
-              isSubmitting={false}
+              onEndTest={handleEndTest}
               isGeneratingQuiz={isGeneratingQuiz}
+              isSubmittingQuiz={isSubmittingQuiz}
+              testBanUntil={testBanUntil}
             />
           )}
 

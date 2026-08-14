@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { Course, QuizQuestion } from '../types';
+import type { Course, QuizAnswerLogEntry, QuizQuestion } from '../types';
 import { toCourse, toQuizQuestion, type CourseWithInstructor } from './mappers';
 
 const COURSE_SELECT = '*, instructor:profiles!courses_instructor_id_fkey (id, name, avatar_url)';
@@ -118,13 +118,67 @@ export async function getTopicQuiz(category: string): Promise<QuizQuestion[]> {
   return (data ?? []).map(toQuizQuestion);
 }
 
-/** Logs the attempt server-side and reports whether the instructor passed. */
-export async function recordSkillTest(category: string, score: number, total: number): Promise<boolean> {
+/** Thrown by recordSkillTest when the RPC reports the user is still banned for this category. */
+export class SkillTestBannedError extends Error {
+  constructor(public readonly bannedUntil: string) {
+    super(`Banned from retaking this test until ${bannedUntil}`);
+  }
+}
+
+/**
+ * Logs the attempt (with its per-question answer/timestamp log) server-side
+ * and reports whether the instructor passed. Throws SkillTestBannedError if
+ * the user is still serving a cooldown for this category.
+ */
+export async function recordSkillTest(
+  category: string,
+  score: number,
+  total: number,
+  passed: boolean,
+  answers: QuizAnswerLogEntry[] = [],
+): Promise<boolean> {
   const { data, error } = await supabase.rpc('record_skill_test', {
     p_category: category,
     p_score: score,
     p_total: total,
+    p_answers: answers,
+    p_passed: passed,
   });
-  if (error) throw error;
+  if (error) {
+    const match = /banned_until_(\S+)/.exec(error.message ?? '');
+    if (match) throw new SkillTestBannedError(match[1]);
+    throw error;
+  }
   return Boolean(data?.passed);
+}
+
+/** Returns the ISO timestamp the user is banned from retaking this category's test until, or null. */
+export async function getSkillTestBan(userId: string, category: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('skill_test_bans')
+    .select('banned_until')
+    .eq('user_id', userId)
+    .eq('category', category)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return new Date(data.banned_until) > new Date() ? data.banned_until : null;
+}
+
+/** Question texts the user was already asked for this category, so the AI generator can avoid repeats. */
+export async function getPastQuestions(userId: string, category: string, limit = 10): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('skill_test_attempts')
+    .select('answers')
+    .eq('user_id', userId)
+    .eq('category', category)
+    .order('attempted_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  const questions = new Set<string>();
+  for (const row of data ?? []) {
+    const entries = (row.answers as QuizAnswerLogEntry[] | null) ?? [];
+    for (const entry of entries) questions.add(entry.question);
+  }
+  return Array.from(questions).slice(0, 50);
 }

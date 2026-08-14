@@ -5,6 +5,7 @@ interface GenerateQuizInput {
   title: string;
   category: string;
   description: string;
+  avoidQuestions?: string[];
 }
 
 /** Asks the `generate-quiz` edge function (Groq) for an AI-written skill test. */

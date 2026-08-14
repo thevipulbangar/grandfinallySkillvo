@@ -140,10 +140,20 @@ create table skill_test_attempts (
   score        integer not null check (score >= 0),
   total        integer not null check (total > 0),
   passed       boolean not null,
+  answers      jsonb not null default '[]'::jsonb,
   attempted_at timestamptz not null default now()
 );
 
 create index skill_test_user_idx on skill_test_attempts (user_id, category);
+
+-- Category-scoped 2-month cooldown after a failed skill test.
+create table skill_test_bans (
+  user_id      uuid not null references profiles (id) on delete cascade,
+  category     text not null,
+  banned_until timestamptz not null,
+  created_at   timestamptz not null default now(),
+  primary key (user_id, category)
+);
 
 -- ---------------------------------------------------------------- wallet
 
@@ -730,7 +740,9 @@ $$;
 create or replace function record_skill_test(
   p_category text,
   p_score    integer,
-  p_total    integer
+  p_total    integer,
+  p_answers  jsonb default '[]'::jsonb,
+  p_passed   boolean default null
 )
 returns skill_test_attempts
 language plpgsql
@@ -739,10 +751,30 @@ set search_path = public
 as $$
 declare
   v_row skill_test_attempts;
+  v_passed boolean;
+  v_banned_until timestamptz;
 begin
-  insert into skill_test_attempts (user_id, category, score, total, passed)
-  values (auth.uid(), p_category, p_score, p_total, p_score * 2 >= p_total)
+  select banned_until into v_banned_until
+    from skill_test_bans
+   where user_id = auth.uid() and category = p_category and banned_until > now();
+
+  if v_banned_until is not null then
+    raise exception 'banned_until_%', to_char(v_banned_until, 'YYYY-MM-DD"T"HH24:MI:SSOF');
+  end if;
+
+  v_passed := coalesce(p_passed, p_score * 2 >= p_total);
+
+  insert into skill_test_attempts (user_id, category, score, total, passed, answers)
+  values (auth.uid(), p_category, p_score, p_total, v_passed, p_answers)
   returning * into v_row;
+
+  if not v_passed then
+    insert into skill_test_bans (user_id, category, banned_until)
+    values (auth.uid(), p_category, now() + interval '2 months')
+    on conflict (user_id, category)
+    do update set banned_until = excluded.banned_until, created_at = now();
+  end if;
+
   return v_row;
 end;
 $$;
@@ -795,6 +827,7 @@ alter table course_lessons          enable row level security;
 alter table enrollments             enable row level security;
 alter table topic_quiz_questions    enable row level security;
 alter table skill_test_attempts     enable row level security;
+alter table skill_test_bans         enable row level security;
 alter table credit_transactions     enable row level security;
 alter table payments                enable row level security;
 alter table live_sessions           enable row level security;
@@ -880,6 +913,11 @@ create policy "quiz bank is readable"
 
 create policy "users read their own attempts"
   on skill_test_attempts for select
+  to authenticated
+  using (user_id = auth.uid());
+
+create policy "users read their own bans"
+  on skill_test_bans for select
   to authenticated
   using (user_id = auth.uid());
 
@@ -973,7 +1011,7 @@ grant execute on function request_enrollment(uuid)                       to auth
 grant execute on function decide_enrollment(uuid, boolean)               to authenticated;
 grant execute on function set_enrollment_progress(uuid, integer, text)   to authenticated;
 grant execute on function complete_enrollment(uuid)                      to authenticated;
-grant execute on function record_skill_test(text, integer, integer)      to authenticated;
+grant execute on function record_skill_test(text, integer, integer, jsonb, boolean) to authenticated;
 grant execute on function ensure_profile()                               to authenticated;
 
 -- ============================================================

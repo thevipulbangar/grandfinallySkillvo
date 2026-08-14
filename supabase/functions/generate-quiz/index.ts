@@ -1,14 +1,14 @@
-// Generates a topic qualification quiz with Groq and returns it to the client.
+// Generates a topic qualification quiz with Gemini and returns it to the client.
 // Deploy: supabase functions deploy generate-quiz
 //
-// The Groq API key stays server-side (set with `supabase secrets set
-// GROQ_API_KEY=...`) — a client-side key would be readable by anyone who
+// The Gemini API key stays server-side (set with `supabase secrets set
+// GEMINI_API_KEY=...`) — a client-side key would be readable by anyone who
 // opens devtools.
 
 import { json, preflight } from '../_shared/cors.ts';
 import { requireUser } from '../_shared/supabase.ts';
 
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 const QUESTION_COUNT = 5;
 
 interface QuizQuestion {
@@ -23,14 +23,18 @@ Deno.serve(async (req) => {
 
   try {
     await requireUser(req);
-    const { title, category, description } = await req.json();
+    const { title, category, description, avoidQuestions } = await req.json();
 
     if (!title || typeof title !== 'string') {
       return json({ error: 'A course title is required.' }, 400);
     }
 
-    const apiKey = Deno.env.get('GROQ_API_KEY');
+    const apiKey = Deno.env.get('GEMINI_API_KEY');
     if (!apiKey) return json({ error: 'Quiz generation is not configured.' }, 500);
+
+    const avoidList: string[] = Array.isArray(avoidQuestions)
+      ? avoidQuestions.filter((q: unknown) => typeof q === 'string').slice(0, 50)
+      : [];
 
     const prompt =
       `You are writing a ${QUESTION_COUNT}-question multiple-choice skill test that verifies whether ` +
@@ -39,32 +43,38 @@ Deno.serve(async (req) => {
       `Category: ${category || 'General'}\n` +
       `Description: ${description || '(none provided)'}\n\n` +
       `Write questions that test genuine subject-matter expertise, not trivia about the course itself. ` +
-      `Each question needs exactly 4 options with exactly one correct answer. ` +
-      `Respond with ONLY a JSON object of the shape: ` +
+      `Each question needs exactly 4 options with exactly one correct answer.` +
+      (avoidList.length > 0
+        ? ` Do not reuse or closely rephrase any of these previously-asked questions:\n` +
+          avoidList.map((q) => `- ${q}`).join('\n') +
+          `\n`
+        : '') +
+      `\n\nRespond with ONLY a JSON object of the shape: ` +
       `{"questions":[{"question":"string","options":["a","b","c","d"],"correctAnswer":0}]}. ` +
       `correctAnswer is the zero-based index of the right option. No markdown, no commentary.`;
 
-    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.6,
+            responseMimeType: 'application/json',
+          },
+        }),
       },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.6,
-        response_format: { type: 'json_object' },
-      }),
-    });
+    );
 
-    if (!groqRes.ok) {
-      console.error('groq request failed', await groqRes.text());
+    if (!geminiRes.ok) {
+      console.error('gemini request failed', await geminiRes.text());
       return json({ error: 'Quiz generation failed.' }, 502);
     }
 
-    const completion = await groqRes.json();
-    const raw = completion.choices?.[0]?.message?.content;
+    const completion = await geminiRes.json();
+    const raw = completion.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!raw) return json({ error: 'Quiz generation returned no content.' }, 502);
 
     let parsed: { questions?: unknown };
